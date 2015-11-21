@@ -1,5 +1,4 @@
 public class TestNodes {
-	
 	//Test map nodes
     Node one = new Node(1, 9, "Exit");
     Node two = new Node(3, 9);
@@ -49,4 +48,6 @@ public class TestNodes {
     Edge u = new Edge (nineteen, twentytwo, 4);
     Edge v = new Edge (twentytwo, twentythree, 2);
     Edge w = new Edge (twentytwo, four, 6);
+    
+    
 }
