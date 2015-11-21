@@ -1,0 +1,4 @@
+Nodex 557 Nodey 358 Node2x 552 Node2y 391 Weight 33
+Nodex 557 Nodey 414 Node2x 552 Node2y 391 Weight 23
+Nodex 552 Nodey 391 Node2x 420 Node2y 363 Weight 134
+Nodex 493 Nodey 313 Node2x 420 Node2y 363 Weight 88
