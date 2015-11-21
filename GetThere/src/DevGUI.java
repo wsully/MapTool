@@ -51,15 +51,20 @@ import java.io.FileOutputStream;
 
 public class DevGUI extends JPanel{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2270760135813536905L;
 	private static LinkedList<Map> maps = new LinkedList<Map>();
 	private static LinkedList<Node> currentStartNodes = new LinkedList<Node>();
 	private static LinkedList<Edge> currentStartEdges = new LinkedList<Edge>();
 	private static LinkedList<Node> currentEndNodes = new LinkedList<Node>();
 	private static LinkedList<Edge> currentEndEdges = new LinkedList<Edge>();
-	private String[] startRooms = {};
-	private String[] endRooms = {};
+	private String[] startRooms = new String[1000];
+	private String[] endRooms = new String[1000];
 	private String buildingSelectedSTART;   //track which building is selected to start in.
 	private String buildingSelectedEND;
+	private String currentMapName;
 
 	String outputVar = "src/output.txt";
 	String inputVar = "src/output.txt";
@@ -85,67 +90,13 @@ public class DevGUI extends JPanel{
 	private JLabel roomEnd;
 
 	//Combo Boxes on the GUI
-	private JComboBox startBuildingSEL;
-	private JComboBox startRoomSEL;
-	private JComboBox endBuildingSEL;
-	private JComboBox endRoomSEL;
+	private JComboBox<String> startBuildingSEL;
+//	private JComboBox startRoomSEL;
+//	private JComboBox endBuildingSEL;
+//	private JComboBox endRoomSEL;
 
 	//Buttons on the UI
 	private JButton searchButton;
-
-	//List of buildings to be shown to the user
-	//private String[] buildings = {"Stratton Hall", "Project Centre", "Library", "Atwater Kent"}; 
-	private String[] buildings =  {" ", "Stratton Basement", "Stratton 1st", "Stratton 2nd"};
-	     //track which building is selected to end in.
-	//private Map selected;                 //track which map to display
-
-	//List of rooms respective of the buildings
-	//private String[] roomsStratton = {"101", "102A", "102B", "103", "104A", "104B", 
-	//      "104C", "105A", "105B", "105C", "105D", "106", 
-	//    "107", "107A", "108A", "109A", "109B", "110", "111-Bathroom(F)"};
-	private String[] strattonBase = {"001","002","003","004","006","007","009","009A","009B","010","011",
-			"012","013","014"};
-	private String[] strattonFirst ={"101", "102A", "102B", "103", "104A", "104B", 
-			"104C", "105A", "105B", "105C", "105D", "106", 
-			"107", "107A", "108A", "109A", "109B", "110", "111-Bathroom(F)"};
-	private String[] strattonSecond = {"201A", "201B", "201C", "202","202A", "202B", "202C",
-			"202D", "202E", "203", "204", "205", "206", "207", "208", "209-Bathroom(M)"};
-	private String[] roomsProjectCentre = {"4", "5", "6"};
-	private String[] roomsLibrary = {"7", "8", "9"};
-	private String[] roomsAtwaterKent = {"10", "11", "12"};
-	private String[] mapList = {"MapImages/StrattonHall-Basement.jpg", "MapImages/StrattonHall-1st.jpg", "MapImages/StrattonHall-2nd.jpg", 
-								"MapImages/DevBackground1.jpg"};
-
-	//Variable to track which room list to display
-	
-	private String currentMap;
-
-	protected enum BUILDINGS {
-		/*STRATTONHALL, PROJECTCENTRE, LIBRARY, ATWATERKENT;
-        public static BUILDINGS getEnum(String s){
-            if(s.equals("Stratton Hall")){
-                return STRATTONHALL;
-            }else if(s.equals("Project Centre")){
-                return PROJECTCENTRE;
-            }else if(s.equals("Library")){
-                return LIBRARY;
-            }else if (s.equals("Atwater Kent")){
-                return ATWATERKENT;
-            }
-            throw new IllegalArgumentException("No Enum specified for this string");
-        }*/
-		STRATTONHALLBASE, STRATTONHALLFIRST, STRATTONHALLSECOND;
-		public static BUILDINGS getEnum(String s){
-			if(s.equals("Stratton Hall Basement")){
-				return STRATTONHALLBASE;
-			}else if(s.equals("Stratton Hall First Floor")){
-				return STRATTONHALLFIRST;
-			}else if(s.equals("Stratton Hall Second Floor")){
-				return STRATTONHALLSECOND;
-			}
-			throw new IllegalArgumentException("No Enum specified for this string");
-		}
-	}
 
 	private Edge edge;
 	private Node node1;
@@ -167,7 +118,7 @@ public class DevGUI extends JPanel{
 	//Launch the application. 
 	public static void main(String[] args) {
 		
-		Map m = new Map("world-map.jpg", "World Map");
+		Map m = new Map("MapImages/world-map.jpg", "World Map");
 		Node usa = new Node(200, 250);
 		m.addNode(usa);
 		Node asia = new Node(600, 150);
@@ -214,33 +165,34 @@ public class DevGUI extends JPanel{
 		mapPanel.add(m1);
 
 		//Creating Labels
-		startPoint = new JLabel("FROM");
-		startPoint.setBounds(780, 6, 132, 29);
+//		startPoint = new JLabel("FROM");
+//		startPoint.setBounds(780, 6, 132, 29);
 
-		buildingStart = new JLabel("Select Building:");
+		buildingStart = new JLabel("Select Map:");
 		buildingStart.setBounds(762, 26, 132, 29);
+		
+		
 
-		roomStart = new JLabel("Select Room:");
-		roomStart.setBounds(762, 70, 132, 29);
-
-		endPoint = new JLabel("TO");
-		endPoint.setBounds(780, 126, 132, 29);
-
-		buildingEnd = new JLabel("Select Building:");
-		buildingEnd.setBounds(762, 146, 132, 29);
-
-		roomEnd = new JLabel("Select Room:");
-		roomEnd.setBounds(762, 190, 132, 29);
+//		roomStart = new JLabel("Select Room:");
+//		roomStart.setBounds(762, 70, 132, 29);
+//
+//		endPoint = new JLabel("TO");
+//		endPoint.setBounds(780, 126, 132, 29);
+//
+//		buildingEnd = new JLabel("Select Building:");
+//		buildingEnd.setBounds(762, 146, 132, 29);
+//
+//		roomEnd = new JLabel("Select Room:");
+//		roomEnd.setBounds(762, 190, 132, 29);
 
 		//Add Labels to the uiPanel
-		uiPanel.add(startPoint);
+//		uiPanel.add(startPoint);
 		uiPanel.add(buildingStart);
-		uiPanel.add(roomStart);
-		uiPanel.add(endPoint);
-		uiPanel.add(buildingEnd);
-		uiPanel.add(roomEnd);
+//		uiPanel.add(roomStart);
+//		uiPanel.add(endPoint);
+//		uiPanel.add(buildingEnd);
+//		uiPanel.add(roomEnd);
 		
-		currentMap = mapList[3];
 		//Construct Combo boxes to select start point
 		startBuildingSEL = new JComboBox();
 		startBuildingSEL.setBounds(762, 46, 132, 29);
@@ -255,51 +207,59 @@ public class DevGUI extends JPanel{
 					if(buildingSelectedSTART.equals(maps.get(indexOfCurrentMap).getMapName()))
 						break;
 				}
+				currentMapName = maps.get(indexOfCurrentMap).getMapName();
 				currentStartNodes = maps.get(indexOfCurrentMap).getNodes();
 				currentStartEdges = maps.get(indexOfCurrentMap).getEdges();
 				for(int i = 0; i < currentStartNodes.size(); ++i){
 					startRooms[i] = currentStartNodes.get(i).getName();
 				}
+				uiPanel.repaint();
+		        frame.repaint();
 			}
 		});
+		
+		for (int i = 0; i < maps.size(); i++) {
+	           if(maps.get(i).getMapName() != null)
+	        	   startBuildingSEL.addItem(maps.get(i).getMapName());
+	    }
 
-		startRoomSEL = new JComboBox(startRooms);
-		startRoomSEL.setBounds(762, 90, 132, 29);
-		startRoomSEL.setEditable(false);
-		startRoomSEL.setVisible(true);
-
-		//Construct Combo boxes to select end point
-		endBuildingSEL = new JComboBox();
-		endBuildingSEL.setBounds(762, 166, 132, 29);
-		endBuildingSEL.setEditable(false);
-		endBuildingSEL.setVisible(true);
-		endBuildingSEL.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				int indexOfCurrentMap;
-				JComboBox cb = (JComboBox)e.getSource();
-				buildingSelectedEND = (String)cb.getSelectedItem();
-				for(indexOfCurrentMap = 0; indexOfCurrentMap < maps.size(); ++indexOfCurrentMap){
-					if(buildingSelectedEND.equals(maps.get(indexOfCurrentMap).getMapName()))
-						break;
-				}
-				currentEndNodes = maps.get(indexOfCurrentMap).getNodes();
-				currentEndEdges = maps.get(indexOfCurrentMap).getEdges();
-				for(int i = 0; i < currentEndNodes.size(); ++i){
-					endRooms[i] = currentEndNodes.get(i).getName();
-				}
-			}
-		});
-
-		endRoomSEL = new JComboBox(endRooms);     
-		endRoomSEL.setBounds(762, 210, 132, 29);
-		endRoomSEL.setEditable(false);
-		endRoomSEL.setVisible(true);
+//		startRoomSEL = new JComboBox(startRooms);
+//		startRoomSEL.setBounds(762, 90, 132, 29);
+//		startRoomSEL.setEditable(false);
+//		startRoomSEL.setVisible(true);
+//
+//		//Construct Combo boxes to select end point
+//		endBuildingSEL = new JComboBox();
+//		endBuildingSEL.setBounds(762, 166, 132, 29);
+//		endBuildingSEL.setEditable(false);
+//		endBuildingSEL.setVisible(true);
+//		endBuildingSEL.addActionListener(new ActionListener(){
+//			public void actionPerformed(ActionEvent e) {
+//				int indexOfCurrentMap;
+//				JComboBox cb = (JComboBox)e.getSource();
+//				buildingSelectedEND = (String)cb.getSelectedItem();
+//				for(indexOfCurrentMap = 0; indexOfCurrentMap < maps.size(); ++indexOfCurrentMap){
+//					if(buildingSelectedEND.equals(maps.get(indexOfCurrentMap).getMapName()))
+//						break;
+//				}
+//				currentEndNodes = maps.get(indexOfCurrentMap).getNodes();
+//				currentEndEdges = maps.get(indexOfCurrentMap).getEdges();
+//				for(int i = 0; i < currentEndNodes.size(); ++i){
+//					endRooms[i] = currentEndNodes.get(i).getName();
+//				}
+//			}
+//		});
+//
+//		endRoomSEL = new JComboBox(endRooms);     
+//		endRoomSEL.setBounds(762, 210, 132, 29);
+//		endRoomSEL.setEditable(false);
+//		endRoomSEL.setVisible(true);
 
 		//Add Combo Boxes to UIPanel
 		uiPanel.add(startBuildingSEL);
-		uiPanel.add(startRoomSEL);
-		uiPanel.add(endBuildingSEL);
-		uiPanel.add(endRoomSEL);
+//		uiPanel.add(startRoomSEL);
+//		uiPanel.add(endBuildingSEL);
+//		uiPanel.add(endRoomSEL);
 
 		//Construct button and add button to uiPanel
 		searchButton = new JButton ("Search: ");
@@ -531,7 +491,7 @@ public class DevGUI extends JPanel{
 		@Override
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			ImageIcon mapIcon = new ImageIcon(currentMap);
+			ImageIcon mapIcon = new ImageIcon(currentMapName);
 			ImageIcon pathIcon = new ImageIcon();
 			mapImage = mapIcon.getImage();
 			pathImage = pathIcon.getImage();
@@ -649,8 +609,11 @@ public class DevGUI extends JPanel{
 				int sqY2 = (int) lines[i].getY2();
 				int tolarance = 5;
 
-				if(((x-tolarance <=  sqX1) && (sqX1 <= x+tolarance)) && ((y-tolarance <=  sqY1 ) && ( sqY1 <= y+tolarance)) 
-						|| (((x-tolarance <=  sqX2) && (sqX2 <= x+tolarance)) && ((y-tolarance <=  sqY2) && (sqY2 <= y+tolarance))))
+				if(((x-tolarance <=  sqX1) && (sqX1 <= x+tolarance)) && 
+						((y-tolarance <=  sqY1 ) && ( sqY1 <= y+tolarance)) 
+						|| 
+						(((x-tolarance <=  sqX2) && (sqX2 <= x+tolarance)) && 
+						((y-tolarance <=  sqY2) && (sqY2 <= y+tolarance))))
 				{
 					System.out.println("Remove line: " +i);
 
@@ -694,13 +657,12 @@ public class DevGUI extends JPanel{
 
 		public void produceEdges(){
 			for (int i = 0; i < edgeList.size(); i++){
-				
-			
-				
-				System.out.println("Node n"+ i + " = new Node(" + edgeList.get(i).getNode1().getX() + ", " +  edgeList.get(i).getNode1().getY() + " );");
-				System.out.println("Node n"+ i + " = new Node(" + edgeList.get(i).getNode2().getX() + ", " +  edgeList.get(i).getNode2().getY() + " );");
-				
-			
+				System.out.println("Node n"+ i + " = new Node(" + 
+									currentStartEdges.get(i).getNode1().getX() + ", " +  
+									currentStartEdges.get(i).getNode1().getY() + " );");
+				System.out.println("Node n"+ i + " = new Node(" + 
+									currentStartEdges.get(i).getNode2().getX() + ", " +  
+									currentStartEdges.get(i).getNode2().getY() + " );");
 			}
 		}
 
