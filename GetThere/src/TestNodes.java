@@ -1,4 +1,6 @@
 public class TestNodes {
+	
+	
 	//Test map nodes
     Node one = new Node(1, 9, "Exit");
     Node two = new Node(3, 9);

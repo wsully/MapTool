@@ -50,6 +50,11 @@ import java.io.FileOutputStream;
 
 
 public class DevGUI extends JPanel{
+	
+	private static LinkedList<Map> maps = new LinkedList<Map>();
+	private static LinkedList<Node> currentNodes = new LinkedList<Node>();
+	private static LinkedList<Edge> currentEdges = new LinkedList<Edge>();
+	
 
 	String outputVar = "src/output.txt";
 	String inputVar = "src/output.txt";
@@ -157,6 +162,15 @@ public class DevGUI extends JPanel{
 
 	//Launch the application. 
 	public static void main(String[] args) {
+		
+		Map m = new Map("world-map.jpg", "World Map");
+		Node usa = new Node(200, 250);
+		m.addNode(usa);
+		Node asia = new Node(600, 150);
+		m.addNode(asia);
+		maps.add(m);
+		
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -230,17 +244,24 @@ public class DevGUI extends JPanel{
 		startBuildingSEL.setVisible(true);
 		startBuildingSEL.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				int i;
+				int indexOfCurrentMap;
 				JComboBox cb = (JComboBox)e.getSource();
 				buildingSelectedSTART = (String)cb.getSelectedItem();
+				for(indexOfCurrentMap = 0; indexOfCurrentMap < maps.size(); ++indexOfCurrentMap){
+					if(buildingSelectedSTART.equals(maps.get(indexOfCurrentMap).getMapName()))
+						break;
+				}
+				currentNodes = maps.get(indexOfCurrentMap).getNodes();
+				currentEdges = maps.get(indexOfCurrentMap).getEdges();
+				/*
 				if(buildingSelectedSTART.equals("Stratton Basement")){
 					currentMap = mapList[0];
 					roomsSelected = strattonBase;
 					startRoomSEL.removeAllItems();
 					endRoomSEL.removeAllItems();
 					for(i=0; i<roomsSelected.length; i++){
-					startRoomSEL.addItem(roomsSelected[i]);
-					endRoomSEL.addItem(roomsSelected[i]);
+						startRoomSEL.addItem(roomsSelected[i]);
+						endRoomSEL.addItem(roomsSelected[i]);
 					}
 					repaint();
 					revalidate();
@@ -270,7 +291,7 @@ public class DevGUI extends JPanel{
 					currentMap = mapList[3];
 					repaint();
 					revalidate();
-					}
+					}*/
 			}
 		});
 
@@ -561,12 +582,12 @@ public class DevGUI extends JPanel{
 			g2d.setStroke(s);
 			g2d.setColor(Color.BLACK);
 
-			for (int i = 0; i < nodeList.size(); i++){
-				((Graphics2D)g).draw(new Rectangle (nodeList.get(i).getX(), nodeList.get(i).getY(), SquareWidth, SquareWidth));
+			for (int i = 0; i < currentNodes.size(); i++){
+				((Graphics2D)g).draw(new Rectangle (currentNodes.get(i).getX(), currentNodes.get(i).getY(), SquareWidth, SquareWidth));
 			}
 
-			for (int i = 0; i < edgeList.size(); i++){
-				((Graphics2D)g).draw(new Line2D.Double(edgeList.get(i).getNode1().getX(), edgeList.get(i).getNode1().getY(),edgeList.get(i).getNode2().getX(),edgeList.get(i).getNode2().getY() ));
+			for (int i = 0; i < currentEdges.size(); i++){
+				((Graphics2D)g).draw(new Line2D.Double(currentEdges.get(i).getNode1().getX(), currentEdges.get(i).getNode1().getY(),currentEdges.get(i).getNode2().getX(),currentEdges.get(i).getNode2().getY() ));
 			}
 		}
 

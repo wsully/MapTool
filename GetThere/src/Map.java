@@ -1,25 +1,35 @@
-import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
+
+import javax.imageio.ImageIO;
 
 public class Map {
 	
-	private Image mapImage;
+	private BufferedImage mapImage;
 	private LinkedList<Node> nodes;
 	private LinkedList<Edge> edges;
 	private String mapName;
 	
-	public Map(Image mapImage, String mapName){
-		this.mapImage = mapImage;
+	public Map(String mapPath, String mapName){
+		BufferedImage img = null;
+		try {
+		    img = ImageIO.read(new File(mapPath));
+		} catch (IOException e) {}
+		this.mapImage = img;
 		this.mapName = mapName;
+		nodes = new LinkedList<Node>();
+		edges = new LinkedList<Edge>();
 	} 
 	
-	public Image getImage(){
+	public BufferedImage getImage(){
 		return this.mapImage;
 	}
 	
-	public void setImage(Image mapImage){
-		this.mapImage = mapImage;
-	}
+	//public void setImage(Image mapImage){
+	//	this.mapImage = mapImage;
+	//}
 	
 	public LinkedList<Node> getNodes(){
 		return this.nodes;
