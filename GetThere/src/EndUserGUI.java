@@ -421,9 +421,9 @@ public class EndUserGUI extends JPanel implements ActionListener{
 				// JLabel end = new JLabel("End");
 				// start.setBounds((listPath.getFirst().getX()*25)-12, (listPath.getFirst().getY()*25)-60, 100, 100);
 				// end.setBounds((listPath.getLast().getX()*25)-8, (listPath.getLast().getY()*25)-60, 100, 100);
-				path.moveTo(listPath.getFirst().getX()*25+20, listPath.getFirst().getY()*25); 
+				path.moveTo(listPath.getFirst().getX(), listPath.getFirst().getY()); 
 				for (i=0; i<listPath.size(); i++){
-					path.lineTo(listPath.get(i).getX()*25+20,listPath.get(i).getY()*25);
+					path.lineTo(listPath.get(i).getX(),listPath.get(i).getY());
 					g2d.draw(path);
 				}
 				// this.add(start);
