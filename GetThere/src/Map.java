@@ -1,13 +1,20 @@
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 
-public class Map {
+public class Map implements Serializable{
 	
-	private BufferedImage mapImage;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8156376045776386768L;
+	private transient BufferedImage mapImage;
 	private LinkedList<Node> nodes;
 	private LinkedList<Edge> edges;
 	private String mapName;
@@ -22,16 +29,25 @@ public class Map {
 		nodes = new LinkedList<Node>();
 		edges = new LinkedList<Edge>();
 	} 
-	
-	
-	
-	
+		
 	public Map(BufferedImage img, String mapName){
 		this.mapImage = img;
 		this.mapName = mapName;
 		nodes = new LinkedList<Node>();
 		edges = new LinkedList<Edge>();
 	} 
+	
+	private void writeObject(ObjectOutputStream out)throws IOException{
+        out.defaultWriteObject();
+        //write buff with imageIO to out
+        ImageIO.write(mapImage, "png", out);
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
+        in.defaultReadObject();
+        //read buff with imageIO from in
+        mapImage = ImageIO.read(in);
+    }
 	
 	public BufferedImage getImage(){
 		return this.mapImage;

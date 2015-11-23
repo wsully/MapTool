@@ -1,4 +1,6 @@
-public class Edge {
+import java.io.Serializable;
+
+public class Edge implements Serializable{
 	private Node node1;
 	private Node node2;
 	private int weight;
