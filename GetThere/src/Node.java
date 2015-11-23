@@ -10,7 +10,7 @@ public class Node implements Serializable{
 	private static final long serialVersionUID = -7114552711668233639L;
 	private int x;
 	private int y;
-	//private NodeType type;
+	private NodeType type;
 	private LinkedList<Node> possibleNodes;
 	private String name;
 	private LinkedList<Edge> EdgesList;
@@ -20,7 +20,7 @@ public class Node implements Serializable{
 	public Node(int x, int y) {
 		this.x = x;
 		this.y = y;
-		this.name = "";
+		this.name = 'x' + Integer.toString(x) + 'y' + Integer.toString(y);
 		this.possibleNodes = new LinkedList<Node>();
 		this.EdgesList = new LinkedList<Edge>();
 	}
@@ -72,14 +72,14 @@ public class Node implements Serializable{
 		this.possibleNodes.add(node);
 	}
 
-//	public NodeType getType() {
-//		return type;
-//	}
-//
-//	public void setType(NodeType type) {
-//		this.type = type;
-//	}
-//	
+	public NodeType getType() {
+		return type;
+	}
+
+	public void setType(NodeType type) {
+		this.type = type;
+	}
+	
 	public boolean equals(Node n){
 		return ((this.x == n.x) && (this.y == n.y));
 	}
