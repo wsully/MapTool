@@ -417,19 +417,17 @@ public class EndUserGUI extends JPanel implements ActionListener{
 				removeAll();
 				int i;
 				path = new GeneralPath();
-				//                path.moveTo(0, 0);
-				//                path.lineTo(100, 100);
-				//                path.lineTo(300, 400);
-				JLabel start = new JLabel("Start");
-				JLabel end = new JLabel("End");
-				start.setBounds((listPath.getFirst().getX()*25)-12, (listPath.getFirst().getY()*25)-60, 100, 100);
-				end.setBounds((listPath.getLast().getX()*25)-8, (listPath.getLast().getY()*25)-60, 100, 100);
+				// JLabel start = new JLabel("Start");
+				// JLabel end = new JLabel("End");
+				// start.setBounds((listPath.getFirst().getX()*25)-12, (listPath.getFirst().getY()*25)-60, 100, 100);
+				// end.setBounds((listPath.getLast().getX()*25)-8, (listPath.getLast().getY()*25)-60, 100, 100);
 				path.moveTo(listPath.getFirst().getX()*25+20, listPath.getFirst().getY()*25); 
 				for (i=0; i<listPath.size(); i++){
 					path.lineTo(listPath.get(i).getX()*25+20,listPath.get(i).getY()*25);
+					g2d.draw(path);
 				}
-				this.add(start);
-				this.add(end);
+				// this.add(start);
+				// this.add(end);
 				g2d.draw(path);
 				g2d.setStroke(new BasicStroke(3));
 				g2d.setColor(Color.RED);
