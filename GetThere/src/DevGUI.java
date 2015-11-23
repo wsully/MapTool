@@ -4,55 +4,39 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.GeneralPath;
 import java.awt.event.MouseAdapter;
 import java.awt.*;
 import java.awt.geom.Line2D;
-import javax.imageio.*; 
 
 
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import java.util.*;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
 import java.io.FileOutputStream;
 
 import java.awt.image.BufferedImage;
 
 ///**
 //* Created by Lumbini on 11/7/2015.
-//* modified by Billy
+//* modified by Billy and Jeff
 // * */
 //
-
-
-
 
 public class DevGUI extends JPanel{
 	
@@ -60,17 +44,14 @@ public class DevGUI extends JPanel{
 	 * 
 	 */
 	private static final long serialVersionUID = 2270760135813536905L;
-	private static LinkedList<Map> maps = new LinkedList<Map>();
+	public static LinkedList<Map> maps = new LinkedList<Map>();
 	private static LinkedList<Node> currentStartNodes = new LinkedList<Node>();
 	private static LinkedList<Edge> currentStartEdges = new LinkedList<Edge>();
-	private static LinkedList<Node> currentEndNodes = new LinkedList<Node>();
-	private static LinkedList<Edge> currentEndEdges = new LinkedList<Edge>();
 	private String[] startRooms = new String[1000];
-	private String[] endRooms = new String[1000];
 	private String buildingSelectedSTART;   //track which building is selected to start in.
-	private String buildingSelectedEND;
 	private String currentMapName;
-	
+	private SelectMap loadMap;
+	static DevGUI window;
 	private BufferedImage currentMapFile;
 
 
@@ -86,35 +67,12 @@ public class DevGUI extends JPanel{
 	private JFrame frame;       //Creates the main frame for the GUI
 	private JPanel uiPanel;     //Panel to hold the interface buttons
 	private JPanel mapPanel;    //Panel to hold the map
-	private Image mapImage;     //Represents the map to be chosen
-	private Image pathImage;    //Image that draws the path on the map
 
 	//Labels on the GUI
-	private JLabel startPoint;
 	private JLabel buildingStart;
-	private JLabel roomStart;
-	private JLabel endPoint;
-	private JLabel buildingEnd;
-	private JLabel roomEnd;
 
 	//Combo Boxes on the GUI
 	private JComboBox<String> startBuildingSEL;
-//	private JComboBox startRoomSEL;
-//	private JComboBox endBuildingSEL;
-//	private JComboBox endRoomSEL;
-
-	//Buttons on the UI
-	private JButton searchButton;
-
-	private Edge edge;
-	private Node node1;
-	private Node node2;
-	private LinkedList<Edge> edgeList = new LinkedList<Edge>();
-	private LinkedList<Node> nodeList = new LinkedList<Node>();
-	File file1;
-	Process process1;
-	File output;
-	Writer filewriter;
 
 	/**
 	 * Create the application.
@@ -122,9 +80,8 @@ public class DevGUI extends JPanel{
 	public DevGUI(){
 		initialize();
 	}
-
-
-	//Launch the application. 
+ 
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		
 		maps = (LinkedList<Map>) deserialize("MapList");
@@ -143,7 +100,6 @@ public class DevGUI extends JPanel{
 	
 	// saves Map object "m" in a file named "s"
 	public void serialize(String s, LinkedList<Map> maplist){
-		
 		try {
 			FileOutputStream fileOut = new FileOutputStream(s + ".ser");
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
@@ -159,26 +115,19 @@ public class DevGUI extends JPanel{
 	// loads the map stored in file name "s"
 	public static Object deserialize(String s){
 		Object m = null;
-		try
-		{
+		try {
 			FileInputStream fileIn = new FileInputStream(s + ".ser");
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			m = in.readObject();
 			in.close();
 			fileIn.close();
-		}catch(IOException i)
-		{
+		} catch(IOException i){
 			i.printStackTrace();
-
-		}catch(ClassNotFoundException c)
-		{
+		} catch(ClassNotFoundException c){
 			System.out.println("Map class not found");
 			c.printStackTrace();
-	
 		}
-//		System.out.println("Deserialized map...");
-//		System.out.println("Name: " + m.getMapName());
-	return m;
+		return m;
 	}
 
 	/**
@@ -208,42 +157,21 @@ public class DevGUI extends JPanel{
 		mapPanel.add(m1);
 
 		//Creating Labels
-//		startPoint = new JLabel("FROM");
-//		startPoint.setBounds(780, 6, 132, 29);
-
 		buildingStart = new JLabel("Select Map:");
 		buildingStart.setBounds(762, 26, 132, 29);
 		
-		
-
-//		roomStart = new JLabel("Select Room:");
-//		roomStart.setBounds(762, 70, 132, 29);
-//
-//		endPoint = new JLabel("TO");
-//		endPoint.setBounds(780, 126, 132, 29);
-//
-//		buildingEnd = new JLabel("Select Building:");
-//		buildingEnd.setBounds(762, 146, 132, 29);
-//
-//		roomEnd = new JLabel("Select Room:");
-//		roomEnd.setBounds(762, 190, 132, 29);
-
 		//Add Labels to the uiPanel
-//		uiPanel.add(startPoint);
 		uiPanel.add(buildingStart);
-//		uiPanel.add(roomStart);
-//		uiPanel.add(endPoint);
-//		uiPanel.add(buildingEnd);
-//		uiPanel.add(roomEnd);
 		
 		//Construct Combo boxes to select start point
-		startBuildingSEL = new JComboBox();
+		startBuildingSEL = new JComboBox<String>();
 		startBuildingSEL.setBounds(762, 46, 132, 29);
 		startBuildingSEL.setEditable(false);
 		startBuildingSEL.setVisible(true);
 		startBuildingSEL.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				int indexOfCurrentMap;
+				@SuppressWarnings("rawtypes")
 				JComboBox cb = (JComboBox)e.getSource();
 				buildingSelectedSTART = (String)cb.getSelectedItem();
 				for(indexOfCurrentMap = 0; indexOfCurrentMap < maps.size(); ++indexOfCurrentMap){
@@ -263,85 +191,29 @@ public class DevGUI extends JPanel{
 		});
 		
 		for (int i = 0; i < maps.size(); i++) {
-	           if(maps.get(i).getMapName() != null)
-	        	   startBuildingSEL.addItem(maps.get(i).getMapName());
+			if(maps.get(i).getMapName() != null)
+				startBuildingSEL.addItem(maps.get(i).getMapName());
 	    }
-
-//		startRoomSEL = new JComboBox(startRooms);
-//		startRoomSEL.setBounds(762, 90, 132, 29);
-//		startRoomSEL.setEditable(false);
-//		startRoomSEL.setVisible(true);
-//
-//		//Construct Combo boxes to select end point
-//		endBuildingSEL = new JComboBox();
-//		endBuildingSEL.setBounds(762, 166, 132, 29);
-//		endBuildingSEL.setEditable(false);
-//		endBuildingSEL.setVisible(true);
-//		endBuildingSEL.addActionListener(new ActionListener(){
-//			public void actionPerformed(ActionEvent e) {
-//				int indexOfCurrentMap;
-//				JComboBox cb = (JComboBox)e.getSource();
-//				buildingSelectedEND = (String)cb.getSelectedItem();
-//				for(indexOfCurrentMap = 0; indexOfCurrentMap < maps.size(); ++indexOfCurrentMap){
-//					if(buildingSelectedEND.equals(maps.get(indexOfCurrentMap).getMapName()))
-//						break;
-//				}
-//				currentEndNodes = maps.get(indexOfCurrentMap).getNodes();
-//				currentEndEdges = maps.get(indexOfCurrentMap).getEdges();
-//				for(int i = 0; i < currentEndNodes.size(); ++i){
-//					endRooms[i] = currentEndNodes.get(i).getName();
-//				}
-//			}
-//		});
-//
-//		endRoomSEL = new JComboBox(endRooms);     
-//		endRoomSEL.setBounds(762, 210, 132, 29);
-//		endRoomSEL.setEditable(false);
-//		endRoomSEL.setVisible(true);
 
 		//Add Combo Boxes to UIPanel
 		uiPanel.add(startBuildingSEL);
-//		uiPanel.add(startRoomSEL);
-//		uiPanel.add(endBuildingSEL);
-//		uiPanel.add(endRoomSEL);
 
-//		//Construct button and add button to uiPanel
-//		searchButton = new JButton ("Search: ");
-//		searchButton.setBounds(762, 250, 132, 29);
-//		uiPanel.add(searchButton);
-//		JButton devGUI = new JButton ("DevMode");
-//		devGUI.setBounds(762, 420, 132, 29);
-//		uiPanel.add(devGUI);
-//		devGUI.addActionListener(new ActionListener(){
-//			public void actionPerformed(ActionEvent e)
-//			{
-//				DevGUI devMode = new DevGUI();
-//				devMode.setDeveloperMode(true);;
-//			}
-//		});
-//		JButton userGUI = new JButton ("UserMode");
-//		userGUI.setBounds(762, 450, 132, 29);
-//		uiPanel.add(userGUI);
-//		userGUI.addActionListener(new ActionListener(){
-//			public void actionPerformed(ActionEvent e)
-//			{
-//				EndUserGUI userMode = new EndUserGUI();
-//			}
-//		});
-//
-//		//Construct button and add action listener
-//		searchButton.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) 
-//			{
-//
-//			}
-//		});
 
 		if(developerMode)
 		{
-
+			JButton newMap = new JButton("Load New Map");
+			newMap.setBounds(762, 76, 132, 29);
+			uiPanel.add(newMap);
+			newMap.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					loadMap = new SelectMap(window);
+					loadMap.setVisible(true);
+					loadMap.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+				}
+			});
+			
 			JButton btnCreateNodes = new JButton("Create Nodes");
-			btnCreateNodes.setBounds(762, 300, 132, 29);
+			btnCreateNodes.setBounds(762, 136, 132, 29);
 			uiPanel.add(btnCreateNodes);
 			btnCreateNodes.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent e){
@@ -353,45 +225,53 @@ public class DevGUI extends JPanel{
 
 			//Construct button and add action listener
 			JButton btnMakeNeighbors = new JButton("Make Neighbors");
-			btnMakeNeighbors.setBounds(762, 330, 132, 29);
+			btnMakeNeighbors.setBounds(762, 166, 132, 29);
 			uiPanel.add(btnMakeNeighbors);
 			btnMakeNeighbors.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) 
-				{
+				public void actionPerformed(ActionEvent e){
 					System.out.println("Make Neighbors Pushed");
 					createNodes = false;
 					createEdges = true;
-
 				}
 			});
 
 			//Construct button and add action listener
 			JButton btnExport = new JButton("Save Changes");
-			btnExport.setBounds(762, 360, 132, 29);
+			btnExport.setBounds(762, 196, 132, 29);
 			uiPanel.add(btnExport);
 			btnExport.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) 
-				{
+				public void actionPerformed(ActionEvent e){
 					System.out.println("Export Pushed");
 					m1.produceNodes();
 					m1.produceEdges();
-					
 					serialize("MapList", maps);
 				}
 			});
 			
 			
 			JButton btnDeleteMap = new JButton("Delete Map");
-			btnDeleteMap.setBounds(762, 390, 132, 29);
+			btnDeleteMap.setBounds(762, 256, 132, 29);
 			uiPanel.add(btnDeleteMap);
 			btnDeleteMap.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) 
-				{
+				public void actionPerformed(ActionEvent e){
 					System.out.println("Delete Map Pushed");
-					for(int i = 0; i < maps.size(); ++i){
-						if(currentMapName == maps.get(i).getMapName())
-							maps.remove(i);
-					}
+					int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this map?", "Confirm",
+					        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+					
+				    if (response == JOptionPane.NO_OPTION) {
+				    	System.out.println("No button clicked");
+				    	
+				    } else if (response == JOptionPane.YES_OPTION) {
+					    System.out.println("Yes button clicked");
+					    for(int i = 0; i < maps.size(); ++i){
+					    	if(currentMapName == maps.get(i).getMapName())
+					    		maps.remove(i);
+					    }
+					    serialize("MapList", maps);
+					    
+				    } else if (response == JOptionPane.CLOSED_OPTION) {
+				    	System.out.println("JOptionPane closed");
+				    }	
 				}
 			});     
 		}    
@@ -404,46 +284,18 @@ public class DevGUI extends JPanel{
 	
 	public class MouseEvents extends JComponent implements MouseMotionListener{
 		private static final long serialVersionUID = 1L;
-
-
 		private static final int SquareWidth = 5;
-
-		private static final int Max = 1000;
-
-		public Rectangle[] squares = new Rectangle[Max];
-
-		private Line2D[] lines = new Line2D[Max];
-
-		private int squareCount = 0;
-		private int lineCount = 0;
-
-		private int currentSquareIndex = -1;
-		private int currentLineIndex = -1;
-
-		// private BufferedImage image;
-
-		public String nodes;
-
-		private int count = 0;
-		private int startingX = 0;
-		private int startingY = 0;
-		// private int 
-		
+		public String nodes;		
 		int nodeIndex;
-
-
 
 		MouseEvents() {
 			setPreferredSize(new Dimension(760, 666));
 			addMouseMotionListener(this);
-			addMouseListener(new MouseAdapter() 
-			{
+			addMouseListener(new MouseAdapter(){
 				public void mousePressed(MouseEvent evt) {
 					int x = evt.getX();
 					int y = evt.getY();
-					
-					nodeIndex = getNodeIndex(x, y);
-										
+					nodeIndex = getNodeIndex(x, y);			
 				}
 				int staringEdgeIndex;
 				int count = 0;
@@ -457,10 +309,8 @@ public class DevGUI extends JPanel{
 					
 					
 					if(createNodes){
-						if (nodeIndex < 0) {// not inside a square
+						if (nodeIndex < 0) // not inside a square
 							currentStartNodes.add(new Node(x, y));
-							//evt.getComponent();
-						}
 					}
 					
 					if(createEdges){
@@ -489,9 +339,6 @@ public class DevGUI extends JPanel{
 							}
 						}
 						currentStartEdges.removeAll(tempList);
-						 
-						
-						// currentStartEdges.removeEdgesToNode(nodeIndex);
 						currentStartNodes.remove(nodeIndex);
 					}
 					repaint();
@@ -503,27 +350,6 @@ public class DevGUI extends JPanel{
 		@Override
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			ImageIcon mapIcon = new ImageIcon(currentMapName);
-			ImageIcon pathIcon = new ImageIcon();
-			mapImage = mapIcon.getImage();
-			pathImage = pathIcon.getImage();
-			GeneralPath path = null;
-
-			int width = mapImage.getWidth(this);
-			int height = mapImage.getHeight(this);
-			
-			
-//			ImageIcon mapIcon = new ImageIcon(currentMapName);
-//			ImageIcon pathIcon = new ImageIcon();
-//			mapImage = mapIcon.getImage();
-//			pathImage = pathIcon.getImage();
-//			GeneralPath path = null;
-//
-//			int width = mapImage.getWidth(this);
-//			int height = mapImage.getHeight(this);
-
-			int w = width / 3;
-			int h = height / 3;
 
 			g.drawImage(currentMapFile, 0, 0, this);
 			repaint();
@@ -540,7 +366,6 @@ public class DevGUI extends JPanel{
 			g2d.setColor(Color.BLACK);
 
 			for (int i = 0; i < currentStartNodes.size(); i++){
-				
 				((Graphics2D)g).draw(new Rectangle (currentStartNodes.get(i).getX(), currentStartNodes.get(i).getY(), SquareWidth, SquareWidth));
 			}
 
@@ -562,83 +387,6 @@ public class DevGUI extends JPanel{
 		public double calcDistance(Node n1, Node n2)
 		{
 			return (Math.sqrt((n1.getX()-n2.getX())*(n1.getX()-n2.getX()) + (n1.getY()-n2.getY())*(n1.getY()-n2.getY())));
-		}
-
-		public void printSquareInfo()
-		{
-			System.out.println(squares);
-		}
-
-		public int getSquare(int x, int y) {
-			for (int i = 0; i < squareCount; i++)
-				if(squares[i].contains(x,y))
-					return i;
-			return -1;
-		}
-
-		public int getLines(int x, int y) {
-			for (int i = 0; i < lineCount; i++)
-				if(lines[i].contains(x,y))
-					return i;
-			return -1;
-		}
-
-		public void add(int x, int y) {
-			if (squareCount < Max) {
-				squares[squareCount] = new Rectangle(x, y,SquareWidth,SquareWidth);
-				currentSquareIndex = squareCount;
-				squareCount++;
-				repaint();
-			}
-		}
-		
-
-		public void removeLinesAtSquare(int x, int y)
-		{
-			for (int i = 0; i < lineCount; i++)
-			{
-				int sqX1 = (int) lines[i].getX1();
-				int sqY1 = (int) lines[i].getY1();
-				int sqX2 = (int) lines[i].getX2();
-				int sqY2 = (int) lines[i].getY2();
-				int tolarance = 5;
-
-				if(((x-tolarance <=  sqX1) && (sqX1 <= x+tolarance)) && 
-						((y-tolarance <=  sqY1 ) && ( sqY1 <= y+tolarance)) 
-						|| 
-						(((x-tolarance <=  sqX2) && (sqX2 <= x+tolarance)) && 
-						((y-tolarance <=  sqY2) && (sqY2 <= y+tolarance))))
-				{
-					System.out.println("Remove line: " +i);
-
-					if (i < 0 || i >= lineCount)
-						return;
-					lineCount--;
-					lines[i] = lines[lineCount];
-					if (currentLineIndex == i)
-						currentLineIndex = -1;
-					repaint();
-				}
-			}
-
-		}
-
-
-
-
-		public void remove(int n) {
-			
-			
-			for (int i = 0; i < currentStartEdges.size(); i++)
-			{
-		//		if(currentStartEdges.get(i).contains(currentStartNodes.get(n)))
-		//		currentStartEdges.remove(currentStartEdges.get(i));
-				
-			}
-	
-			repaint();
-
-
 		}
 
 		public void produceNodes(){
@@ -698,22 +446,16 @@ public class DevGUI extends JPanel{
 				setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 			else
 				setCursor(Cursor.getDefaultCursor());
-   
-
-
-		}
+   		}
 		
 		public void mouseDragged(MouseEvent evt) {
-			         int x = evt.getX();
-			         int y = evt.getY();
-					 
-			
-			           if (nodeIndex >= 0) 
-						{
-							currentStartNodes.get(nodeIndex).setX(x);
-							currentStartNodes.get(nodeIndex).setY(y);
-
-			            }
+		    int x = evt.getX();
+		    int y = evt.getY();
+		
+		    if(nodeIndex >= 0) {
+				currentStartNodes.get(nodeIndex).setX(x);
+				currentStartNodes.get(nodeIndex).setY(y);
+		    }
 		}
 	}
 	public Boolean getDeveloperMode(){

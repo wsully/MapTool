@@ -1,6 +1,10 @@
 import java.io.Serializable;
 
 public class Edge implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3770566896104677769L;
 	private Node node1;
 	private Node node2;
 	private int weight;

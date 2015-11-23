@@ -4,6 +4,10 @@ import java.util.LinkedList;
 
 public class Node implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7114552711668233639L;
 	private int x;
 	private int y;
 	//private NodeType type;
