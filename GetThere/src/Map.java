@@ -83,17 +83,19 @@ public class Map implements Serializable{
 	
 	public void deleteNode(Node node){
 		for(int i = 0; i < nodes.size(); i++){
-			if(node.equals(nodes.get(i))){
+			if(node.equals(nodes.get(i)))
 				nodes.remove(i);
-			}
+		}
+		for(int j = 0; j < node.getEdgesList().size(); j++){
+			Edge tempEdge = node.getEdgesList().get(j);
+			this.deleteEdge(tempEdge);
 		}
 	}
 	
 	public void deleteEdge(Edge edge){
 		for(int i = 0; i < edges.size(); i++){
-			if(edge.equals(edges.get(i))){
+			if(edge.equals(edges.get(i)))
 				edges.remove(i);
-			}
 		}
 	}
 }

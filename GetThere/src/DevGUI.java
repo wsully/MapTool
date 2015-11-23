@@ -488,6 +488,19 @@ public class DevGUI extends JPanel{
 					}
 					
 					if (evt.getClickCount() >= 2 && createNodes) {
+						
+						LinkedList<Edge> tempList = new LinkedList<Edge>();
+						for (int i = 0; i < currentStartEdges.size(); i++){
+							if(currentStartEdges.get(i).getNode1().equals(currentStartNodes.get(nodeIndex))||
+							   currentStartEdges.get(i).getNode2().equals(currentStartNodes.get(nodeIndex)))
+							{
+								tempList.add(currentStartEdges.get(i));
+							}
+						}
+						currentStartEdges.removeAll(tempList);
+						 
+						
+						// currentStartEdges.removeEdgesToNode(nodeIndex);
 						currentStartNodes.remove(nodeIndex);
 					}
 					repaint();
