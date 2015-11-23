@@ -305,37 +305,37 @@ public class DevGUI extends JPanel{
 //		uiPanel.add(endBuildingSEL);
 //		uiPanel.add(endRoomSEL);
 
-		//Construct button and add button to uiPanel
-		searchButton = new JButton ("Search: ");
-		searchButton.setBounds(762, 250, 132, 29);
-		uiPanel.add(searchButton);
-		JButton devGUI = new JButton ("DevMode");
-		devGUI.setBounds(762, 420, 132, 29);
-		uiPanel.add(devGUI);
-		devGUI.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e)
-			{
-				DevGUI devMode = new DevGUI();
-				devMode.setDeveloperMode(true);;
-			}
-		});
-		JButton userGUI = new JButton ("UserMode");
-		userGUI.setBounds(762, 450, 132, 29);
-		uiPanel.add(userGUI);
-		userGUI.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e)
-			{
-				EndUserGUI userMode = new EndUserGUI();
-			}
-		});
-
-		//Construct button and add action listener
-		searchButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) 
-			{
-
-			}
-		});
+//		//Construct button and add button to uiPanel
+//		searchButton = new JButton ("Search: ");
+//		searchButton.setBounds(762, 250, 132, 29);
+//		uiPanel.add(searchButton);
+//		JButton devGUI = new JButton ("DevMode");
+//		devGUI.setBounds(762, 420, 132, 29);
+//		uiPanel.add(devGUI);
+//		devGUI.addActionListener(new ActionListener(){
+//			public void actionPerformed(ActionEvent e)
+//			{
+//				DevGUI devMode = new DevGUI();
+//				devMode.setDeveloperMode(true);;
+//			}
+//		});
+//		JButton userGUI = new JButton ("UserMode");
+//		userGUI.setBounds(762, 450, 132, 29);
+//		uiPanel.add(userGUI);
+//		userGUI.addActionListener(new ActionListener(){
+//			public void actionPerformed(ActionEvent e)
+//			{
+//				EndUserGUI userMode = new EndUserGUI();
+//			}
+//		});
+//
+//		//Construct button and add action listener
+//		searchButton.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) 
+//			{
+//
+//			}
+//		});
 
 		if(developerMode)
 		{
@@ -366,7 +366,7 @@ public class DevGUI extends JPanel{
 			});
 
 			//Construct button and add action listener
-			JButton btnExport = new JButton("Export");
+			JButton btnExport = new JButton("Save Changes");
 			btnExport.setBounds(762, 360, 132, 29);
 			uiPanel.add(btnExport);
 			btnExport.addActionListener(new ActionListener() {
@@ -381,26 +381,17 @@ public class DevGUI extends JPanel{
 			});
 			
 			
-			JButton btnImport = new JButton("Import");
-			btnImport.setBounds(762, 390, 132, 29);
-			uiPanel.add(btnImport);
-			btnImport.addActionListener(new ActionListener() {
+			JButton btnDeleteMap = new JButton("Delete Map");
+			btnDeleteMap.setBounds(762, 390, 132, 29);
+			uiPanel.add(btnDeleteMap);
+			btnDeleteMap.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) 
 				{
-					System.out.println("Import Pushed");
-					file1 = new File(inputVar);
-					process1 = new Process(file1);
-					nodeList.addAll(process1.getNodes());
-					edgeList.addAll(process1.getEdges());
-					repaint();
-
-					int x;
-					int y;
-					for(int i = 0; i < nodeList.size(); i++){
-						x = (nodeList.get(i).getX());
-						y = (nodeList.get(i).getY());
+					System.out.println("Delete Map Pushed");
+					for(int i = 0; i < maps.size(); ++i){
+						if(currentMapName == maps.get(i).getMapName())
+							maps.remove(i);
 					}
-					importPushed = true;
 				}
 			});     
 		}    
