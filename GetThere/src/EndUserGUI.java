@@ -46,12 +46,12 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	private static LinkedList<Node> currentStartNodes = new LinkedList<Node>();
 	private static LinkedList<Edge> currentStartEdges = new LinkedList<Edge>();
 	private static LinkedList<Node> currentEndNodes = new LinkedList<Node>();
-	private static LinkedList<Edge> currentEndEdges = new LinkedList<Edge>();
+	//private static LinkedList<Edge> currentEndEdges = new LinkedList<Edge>();
 	private String[] startRooms;
 	private String[] endRooms = new String[100];
 //	private String buildingSelectedSTART;   //track which building is selected to start in.
 //	private String buildingSelectedEND;
-	private String currentMapName;
+	//private String currentMapName;
 	private BufferedImage currentMapFile;
 
 	private JTextArea directions;
@@ -60,7 +60,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	private JPanel uiPanel;		//Panel to hold the interface buttons
 	private JPanel mapPanel;	//Panel to hold the map
 	private Image mapImage;		//Represents the map to be chosen
-	private Image pathImage;	//Image that draws the path on the map
+	//private Image pathImage;	//Image that draws the path on the map
 
 	//Labels on the GUI
 	private JLabel startPoint;
@@ -69,19 +69,19 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	private JLabel endPoint;
 	private JLabel buildingEnd;
 	private JLabel roomEnd;
-	private JLabel floorStart;
+	//private JLabel floorStart;
 
 	//Combo Boxes on the GUI
-	private JComboBox startBuildingSEL;
-	private JComboBox startRoomSEL;
-	private JComboBox endBuildingSEL;
-	private JComboBox endRoomSEL;
-	private JComboBox startFloorSEL;
+	private JComboBox<String> startBuildingSEL;
+	private JComboBox<String> startRoomSEL;
+	private JComboBox<String> endBuildingSEL;
+	private JComboBox<String> endRoomSEL;
+	//private JComboBox startFloorSEL;
 
 	//Buttons on the UI
 	private JButton searchButton;
 	Graphics g;
-	Boolean updatePath = false;
+	boolean updatePath = false;
 	private JButton leftArrow;
 	private JButton rightArrow;
 
@@ -89,94 +89,15 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	private Node startNode;
 	private Node endNode;
 	private LinkedList<Node> listPath = new LinkedList<Node>();
-	private String pathDire; 
 	private Djikstra pathCalc;
 
 	//List of buildings to be shown to the user
-	//private String[] buildings = { "Stratton Hall"}; 
 	private String buildingSelectedSTART;	//track which building is selected to start in.
-	private String roomSelectedSTART;
-	private String floorSelectedSTART;
 	private String buildingSelectedEND;		//track which building is selected to end in.
-	//private Map selected;					//track which map to display
 	public ImageIcon mapIcon;
 
 
-	//Test map nodes
-	// Node one = new Node(1, 12, "Exit");
-	Node two = new Node(3, 12);
-	Node three = new Node(3, 13, "101");
-	Node four = new Node(9, 12);
-	Node five = new Node(9, 13, "102");
-	Node six = new Node(15, 12);
-	Node seven = new Node (15, 13, "103");
-	Node eight = new Node (19, 12);
-	//Node nine = new Node (19, 13, "104");
-	Node ten = new Node (26, 12);
-	Node eleven = new Node (26, 13, "104");
-	Node twelve = new Node (28, 12);
-	Node thirteen = new Node (28, 20, "Exit");
-	Node fourteen = new Node (28, 2);
-	Node fifteen = new Node (26, 2);
-	Node sixteen = new Node (26, 3, "105");
-	Node seventeen = new Node (19, 2);
-	//Node eighteen = new Node (19, 3, "105");
-	Node nineteen = new Node (9, 2);
-	Node twenty = new Node (3, 2);
-	Node twentyone = new Node (3, 3, "107");
-	Node twentytwo = new Node (9, 6);
-	Node twentythree = new Node (11, 6, "106");
-
-	//Test map edges
-	// Edge a = new Edge (one, two, 2*25);
-	Edge b = new Edge (two, three, 1*25);
-	Edge c = new Edge (two, four, 6*25);
-	Edge d = new Edge (four, five, 1*25);
-	Edge e = new Edge (four, six, 6*25);
-	Edge f = new Edge (six, seven, 1*25);
-	Edge gee = new Edge (six, eight, 4*25);
-	//Edge h = new Edge (eight, nine, 1*25);
-	Edge i = new Edge (eight, ten, 7*25);
-	Edge j = new Edge (ten, eleven, 1*25);
-	Edge k = new Edge (ten, twelve, 2*25);
-	Edge l = new Edge (twelve, thirteen, 8*25);
-	Edge m = new Edge (twelve, fourteen, 10*25);
-	Edge n = new Edge (fourteen, fifteen, 2*25);
-	Edge o = new Edge (fifteen, sixteen, 1*25);
-	Edge p = new Edge (fifteen, seventeen, 7*25);
-	// Edge q = new Edge (seventeen, eighteen, 1*25);
-	Edge r = new Edge (seventeen, nineteen, 10*25);
-	Edge s = new Edge (nineteen, twenty, 6*25);
-	Edge t = new Edge (twenty, twentyone, 1*25);
-	Edge u = new Edge (nineteen, twentytwo, 4*25);
-	Edge v = new Edge (twentytwo, twentythree, 2*25);
-	Edge w = new Edge (twentytwo, four, 6*25);
-	Node[] testNodes = new Node[]{ two, three, four, five, six, seven, eight, ten, eleven, twelve,
-			thirteen, fourteen, fifteen, sixteen, seventeen, nineteen, twenty, 
-			twentyone, twentytwo, twentythree};
-	private String currentMap;
-	//	private String[] roomsLibrary = {"7", "8", "9"};
-	//	private String[] roomsAtwaterKent = {"10", "11", "12"};
-
-	//Variable to track which room list to display
-	private String[] roomsSelected = {};
 	private int floor = -1;
-
-	protected enum BUILDINGS {
-		STRATTONHALL, PROJECTCENTRE, LIBRARY, ATWATERKENT;
-		public static BUILDINGS getEnum(String s){
-			if(s.equals("Stratton Hall")){
-				return STRATTONHALL;
-			}else if(s.equals("Project Centre")){
-				return PROJECTCENTRE;
-			}else if(s.equals("Library")){
-				return LIBRARY;
-			}else if (s.equals("Atwater Kent")){
-				return ATWATERKENT;
-			}
-			throw new IllegalArgumentException("No Enum specified for this string");
-		}
-	}
 
 
 	/**
@@ -188,6 +109,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 
 	//Launch the application. 
 
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		maps = (LinkedList<Map>) deserialize("MapList");
 		
@@ -238,8 +160,6 @@ public class EndUserGUI extends JPanel implements ActionListener{
 				c.printStackTrace();
 		
 			}
-//			System.out.println("Deserialized map...");
-//			System.out.println("Name: " + m.getMapName());
 		return m;
 		}
 	/**
@@ -256,7 +176,6 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		frame.setResizable(false);
 		frame.setVisible(true);
 
-		//currentMap = mapList[3];
 		//Panel Operations
 		uiPanel = new JPanel();
 		frame.getContentPane().add(uiPanel);
@@ -299,26 +218,27 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		uiPanel.add(buildingEnd);
 		uiPanel.add(roomEnd);
 		
-		startRoomSEL = new JComboBox();
+		startRoomSEL = new JComboBox<String>();
 		startRoomSEL.setBounds(893, 50, 132, 29);
 		startRoomSEL.setEditable(false);
 		startRoomSEL.setVisible(true);
 
 		//Construct Combo boxes to select start point
-		startBuildingSEL = new JComboBox();
+		startBuildingSEL = new JComboBox<String>();
 		startBuildingSEL.setBounds(755, 50, 132, 29);
 		startBuildingSEL.setEditable(false);
 		startBuildingSEL.setVisible(true);
 		startBuildingSEL.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				int indexOfCurrentMap;
-				JComboBox cb = (JComboBox)e.getSource();
+				@SuppressWarnings("unchecked")
+				JComboBox<String> cb = (JComboBox<String>)e.getSource();
 				buildingSelectedSTART = (String)cb.getSelectedItem();
 				for(indexOfCurrentMap = 0; indexOfCurrentMap < maps.size(); ++indexOfCurrentMap){
 					if(buildingSelectedSTART.equals(maps.get(indexOfCurrentMap).getMapName()))
 						break;
 				}
-				currentMapName = maps.get(indexOfCurrentMap).getMapName();
+				//currentMapName = maps.get(indexOfCurrentMap).getMapName();
 				currentStartNodes = maps.get(indexOfCurrentMap).getNodes();
 				startRooms = new String[currentStartNodes.size()];
 				currentStartEdges = maps.get(indexOfCurrentMap).getEdges();
@@ -339,28 +259,29 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	        	startBuildingSEL.addItem(maps.get(i).getMapName());
 	    }
 
-		endRoomSEL = new JComboBox();
+		endRoomSEL = new JComboBox<String>();
 		endRoomSEL.setBounds(893, 116, 132, 29);
 		endRoomSEL.setEditable(false);
 		endRoomSEL.setVisible(true);
 
 		//Construct Combo boxes to select end point
-		endBuildingSEL = new JComboBox();
+		endBuildingSEL = new JComboBox<String>();
 		endBuildingSEL.setBounds(755, 116, 132, 29);
 		endBuildingSEL.setEditable(false);
 		endBuildingSEL.setVisible(true);
 		endBuildingSEL.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				int indexOfCurrentMap;
-				JComboBox cb = (JComboBox)e.getSource();
+				@SuppressWarnings("unchecked")
+				JComboBox<String> cb = (JComboBox<String>)e.getSource();
 				buildingSelectedEND = (String)cb.getSelectedItem();
 				for(indexOfCurrentMap = 0; indexOfCurrentMap < maps.size(); ++indexOfCurrentMap){
 					if(buildingSelectedEND.equals(maps.get(indexOfCurrentMap).getMapName()))
 						break;
 				}
-				currentMapName = maps.get(indexOfCurrentMap).getMapName();
+				//currentMapName = maps.get(indexOfCurrentMap).getMapName();
 				currentEndNodes = maps.get(indexOfCurrentMap).getNodes();
-				currentEndEdges = maps.get(indexOfCurrentMap).getEdges();
+				//currentEndEdges = maps.get(indexOfCurrentMap).getEdges();
 				currentMapFile = maps.get(indexOfCurrentMap).getImage();
 				endRoomSEL.removeAllItems();
 				for(int i = 0; i < currentEndNodes.size(); ++i){
@@ -420,23 +341,22 @@ public class EndUserGUI extends JPanel implements ActionListener{
 			public void actionPerformed(ActionEvent e) 
 			{
 				int i;
-				if(startFloorSEL.getSelectedItem() == "Test"){
-					updatePath = true;
-				}else updatePath = false;
+				updatePath = true;
+//				if(startFloorSEL.getSelectedItem() == "Test"){
+//					updatePath = true;
+//				}else updatePath = false;
 				uiPanel.setVisible(true);
 				frame.setVisible(true);
-				GeneralPath path = null;
+				//GeneralPath path = null;
 				pathCalc = new Djikstra();
 
-				int startInt = Integer.parseInt((String)startRoomSEL.getSelectedItem()) -1;		//need to look up the nodes in the text file
-				int endInt = Integer.parseInt((String)endRoomSEL.getSelectedItem()) -1;
-				for (i=0; i<testNodes.length; i++){
-					if(startRoomSEL.getSelectedItem() == testNodes[i].getName()){
-						startNode = testNodes[i];
-					}
-					if(endRoomSEL.getSelectedItem() == testNodes[i].getName()){
-						endNode = testNodes[i];
-					}
+				for (i = 0; i < currentStartNodes.size(); i++){
+					if(startRoomSEL.getSelectedItem() == currentStartNodes.get(i).getName())
+						startNode = currentStartNodes.get(i);
+				}
+				for(i = 0; i < currentEndNodes.size(); i++){
+					if(endRoomSEL.getSelectedItem() == currentEndNodes.get(i).getName())
+						endNode = currentEndNodes.get(i);
 				}
 
 				System.out.println(startBuildingSEL.getSelectedItem());
