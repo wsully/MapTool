@@ -14,6 +14,8 @@ import java.awt.geom.GeneralPath;
 import java.awt.event.MouseAdapter;
 import java.awt.*;
 import java.awt.geom.Line2D;
+import javax.imageio.*; 
+
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -38,7 +40,7 @@ import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.io.FileOutputStream;
 
-
+import java.awt.image.BufferedImage;
 
 ///**
 //* Created by Lumbini on 11/7/2015.
@@ -65,6 +67,9 @@ public class DevGUI extends JPanel{
 	private String buildingSelectedSTART;   //track which building is selected to start in.
 	private String buildingSelectedEND;
 	private String currentMapName;
+	
+	private BufferedImage currentMapFile;
+
 
 	String outputVar = "src/output.txt";
 	String inputVar = "src/output.txt";
@@ -115,15 +120,38 @@ public class DevGUI extends JPanel{
 		initialize();
 	}
 
+
 	//Launch the application. 
 	public static void main(String[] args) {
 		
-		Map m = new Map("MapImages/world-map.jpg", "World Map");
+		
+		
+		
+		
+		BufferedImage img = null;
+		try { img = ImageIO.read(new File("C:/Users/Jeffrey/Documents/MapTool/GetThere/MapImages/world-map.jpg"));
+		} catch (IOException e) {}
+				
+		Map m = new Map(img , "World Map");
 		Node usa = new Node(200, 250);
 		m.addNode(usa);
 		Node asia = new Node(600, 150);
 		m.addNode(asia);
 		maps.add(m);
+		
+		
+		try { img = ImageIO.read(new File("C:/Users/Jeffrey/Documents/MapTool/GetThere/MapImages/StrattonHall-1st.jpg"));
+		} catch (IOException e) {}
+				
+		Map s = new Map(img, "Stratton 1");
+		Node uk = new Node(40, 250);
+		s.addNode(uk);
+		Node bos = new Node(200, 150);
+		s.addNode(bos);
+		maps.add(s);
+		
+		
+		
 		
 		
 		EventQueue.invokeLater(new Runnable() {
@@ -210,6 +238,7 @@ public class DevGUI extends JPanel{
 				currentMapName = maps.get(indexOfCurrentMap).getMapName();
 				currentStartNodes = maps.get(indexOfCurrentMap).getNodes();
 				currentStartEdges = maps.get(indexOfCurrentMap).getEdges();
+				currentMapFile = maps.get(indexOfCurrentMap).getImage();
 				for(int i = 0; i < currentStartNodes.size(); ++i){
 					startRooms[i] = currentStartNodes.get(i).getName();
 				}
@@ -332,39 +361,39 @@ public class DevGUI extends JPanel{
 				public void actionPerformed(ActionEvent e) 
 				{
 					System.out.println("Export Pushed");
-					//m1.produceNodes();
+					m1.produceNodes();
 					m1.produceEdges();
 
-					try{
-						output = new File(outputVar);
-						output.createNewFile();
-
-						filewriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputVar), "utf-8"));
-						StringBuilder sb = new StringBuilder();
-
-						for (int i = 0; i < edgeList.size(); i++){
-							if (i > 0){
-								sb.append("\n");
-							}
-							sb.append("Nodex ");
-							sb.append(edgeList.get(i).getNode1().getX());
-							sb.append(" Nodey ");
-							sb.append(edgeList.get(i).getNode1().getY());
-							sb.append(" Node2x ");
-							sb.append(edgeList.get(i).getNode2().getX());
-							sb.append(" Node2y ");
-							sb.append(edgeList.get(i).getNode2().getY());
-							sb.append(" Weight ");
-							sb.append(edgeList.get(i).getWeight());
-
-						}
-
-						String everything = sb.toString();
-						filewriter.write(everything);
-						filewriter.close();
-					}catch(IOException f){
-						System.out.println(f);
-					}
+//					try{
+//						output = new File(outputVar);
+//						output.createNewFile();
+//
+//						filewriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputVar), "utf-8"));
+//						StringBuilder sb = new StringBuilder();
+//
+//						for (int i = 0; i < edgeList.size(); i++){
+//							if (i > 0){
+//								sb.append("\n");
+//							}
+//							sb.append("Nodex ");
+//							sb.append(edgeList.get(i).getNode1().getX());
+//							sb.append(" Nodey ");
+//							sb.append(edgeList.get(i).getNode1().getY());
+//							sb.append(" Node2x ");
+//							sb.append(edgeList.get(i).getNode2().getX());
+//							sb.append(" Node2y ");
+//							sb.append(edgeList.get(i).getNode2().getY());
+//							sb.append(" Weight ");
+//							sb.append(edgeList.get(i).getWeight());
+//
+//						}
+//
+//						String everything = sb.toString();
+//						filewriter.write(everything);
+//						filewriter.close();
+//					}catch(IOException f){
+//						System.out.println(f);
+//					}
 
 				}
 			});
@@ -396,6 +425,25 @@ public class DevGUI extends JPanel{
 		frame.setVisible(true);
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public class MouseEvents extends JComponent implements MouseMotionListener{
 		private static final long serialVersionUID = 1L;
 
@@ -422,6 +470,8 @@ public class DevGUI extends JPanel{
 		private int startingX = 0;
 		private int startingY = 0;
 		// private int 
+		
+		int nodeIndex;
 
 
 
@@ -433,45 +483,54 @@ public class DevGUI extends JPanel{
 				public void mousePressed(MouseEvent evt) {
 					
 					
+					
+					
 					int x = evt.getX();
 					int y = evt.getY();
-					currentSquareIndex = getSquare(x, y);
-					if(createNodes)
-					{
-						if (currentSquareIndex < 0) {// not inside a square
-							add(x, y);
-							nodeList.add(new Node(x, y));
-							//evt.getComponent();
-						}
-					}
-					else if (createEdges)
-					{
-						if(importPushed)
-						{
-						for (int i = 0; i < nodeList.size(); i++){
-							add(nodeList.get(i).getX(), nodeList.get(i).getY());
-							System.out.println(nodeList.get(i).getX()+ " "+ nodeList.get(i).getY());
-							importPushed = false;
-						}
-						}
-						if(count == 0)
-						{
-							startingX = (int) squares[getSquare(x, y)].getX();
-							startingY = (int) squares[getSquare(x, y)].getY();
-							count++;
-						}
-						else if (count > 0)
-						{
-							createEdge(startingX, startingY, (int) squares[getSquare(x, y)].getX(), (int) squares[getSquare(x, y)].getY());
-							node1 = new Node(startingX, startingY);
-							node2 = new Node((int) squares[getSquare(x, y)].getX(), (int) squares[getSquare(x, y)].getY());
-							edge = new Edge(node1, node2, (int) calcDistance(startingX, startingY, (int) squares[getSquare(x, y)].getX(), (int) squares[getSquare(x, y)].getY()));
-							edgeList.add(edge);
-							System.out.println("Create Edge: " + startingX +" "+ startingY +"\t"+ (int) squares[getSquare(x, y)].getX() + " " + (int) squares[getSquare(x, y)].getY() +"\nDistance: "+ calcDistance(startingX, startingY, (int) squares[getSquare(x, y)].getX(), (int) squares[getSquare(x, y)].getY()));
-							count = 0;
-						}
-					}
+					
+					nodeIndex = getNodeIndex(x, y);
+					
+					
+//				
+//					currentSquareIndex = getSquare(x, y);
+//					if(createNodes)
+//					{
+//						if (currentSquareIndex < 0) {// not inside a square
+//							add(x, y);
+//							nodeList.add(new Node(x, y));
+//							//evt.getComponent();
+//						}
+//					}
+//					else if (createEdges)
+//					{
+//						if(importPushed)
+//						{
+//						for (int i = 0; i < nodeList.size(); i++){
+//							add(nodeList.get(i).getX(), nodeList.get(i).getY());
+//							System.out.println(nodeList.get(i).getX()+ " "+ nodeList.get(i).getY());
+//							importPushed = false;
+//						}
+//						}
+//						if(count == 0)
+//						{
+//							startingX = (int) squares[getSquare(x, y)].getX();
+//							startingY = (int) squares[getSquare(x, y)].getY();
+//							count++;
+//						}
+//						else if (count > 0)
+//						{
+//							createEdge(startingX, startingY, (int) squares[getSquare(x, y)].getX(), (int) squares[getSquare(x, y)].getY());
+//							node1 = new Node(startingX, startingY);
+//							node2 = new Node((int) squares[getSquare(x, y)].getX(), (int) squares[getSquare(x, y)].getY());
+//							edge = new Edge(node1, node2, (int) calcDistance(startingX, startingY, (int) squares[getSquare(x, y)].getX(), (int) squares[getSquare(x, y)].getY()));
+//							edgeList.add(edge);
+//							System.out.println("Create Edge: " + startingX +" "+ startingY +"\t"+ (int) squares[getSquare(x, y)].getX() + " " + (int) squares[getSquare(x, y)].getY() +"\nDistance: "+ calcDistance(startingX, startingY, (int) squares[getSquare(x, y)].getX(), (int) squares[getSquare(x, y)].getY()));
+//							count = 0;
+//						}
+//					}
 				}
+				int staringEdgeIndex;
+				int count = 0;
 
 				public void mouseClicked(MouseEvent evt) {
 					int x = evt.getX();
@@ -479,10 +538,53 @@ public class DevGUI extends JPanel{
 
 					System.out.println("\nX: " + x + "\t Y: " + y);
 					repaint();
-
-					if (evt.getClickCount() >= 2) {
-						//   remove(currentSquareIndex);
+					
+					
+					if(createNodes)
+					{
+						if (nodeIndex < 0) {// not inside a square
+							currentStartNodes.add(new Node(x, y));
+							//evt.getComponent();
+						}
 					}
+					
+					if(createEdges)
+					{
+					
+					if(count == 0 && nodeIndex >= 0)
+					{
+						staringEdgeIndex = nodeIndex;
+						System.out.println(nodeIndex);
+						count++;
+					}
+					else if(count > 0 && nodeIndex >= 0)
+					{
+						System.out.println(nodeIndex);
+						currentStartEdges.add(new Edge(currentStartNodes.get(staringEdgeIndex), 
+														currentStartNodes.get(nodeIndex),
+														(int) calcDistance(currentStartNodes.get(staringEdgeIndex), currentStartNodes.get(nodeIndex))));
+						count = 0;
+					}
+				}
+					
+					
+					
+
+					if (evt.getClickCount() >= 2 && createNodes) {
+						
+						
+//						for (int i = 0; i <= currentStartEdges.size(); i++)
+//						{
+//							if(currentStartEdges.get(i).getNode1().equals(currentStartNodes.get(nodeIndex))||
+//							   currentStartEdges.get(i).getNode2().equals(currentStartNodes.get(nodeIndex)))
+//							{
+//								currentStartEdges.remove(currentStartEdges.get(i));
+//							}
+//						}
+//						  // currentStartEdges.removeEdgesToNode(nodeIndex);
+						   currentStartNodes.remove(nodeIndex);
+					}
+					repaint();
 				}
 			});
 			addMouseMotionListener(this);
@@ -499,11 +601,21 @@ public class DevGUI extends JPanel{
 
 			int width = mapImage.getWidth(this);
 			int height = mapImage.getHeight(this);
+			
+			
+//			ImageIcon mapIcon = new ImageIcon(currentMapName);
+//			ImageIcon pathIcon = new ImageIcon();
+//			mapImage = mapIcon.getImage();
+//			pathImage = pathIcon.getImage();
+//			GeneralPath path = null;
+//
+//			int width = mapImage.getWidth(this);
+//			int height = mapImage.getHeight(this);
 
 			int w = width / 3;
 			int h = height / 3;
 
-			g.drawImage(mapImage, 0, 0, this);
+			g.drawImage(currentMapFile, 0, 0, this);
 			repaint();
 			revalidate();
 
@@ -518,6 +630,7 @@ public class DevGUI extends JPanel{
 			g2d.setColor(Color.BLACK);
 
 			for (int i = 0; i < currentStartNodes.size(); i++){
+				
 				((Graphics2D)g).draw(new Rectangle (currentStartNodes.get(i).getX(), currentStartNodes.get(i).getY(), SquareWidth, SquareWidth));
 			}
 
@@ -534,6 +647,11 @@ public class DevGUI extends JPanel{
 		public double calcDistance(int x1, int y1, int x2, int y2, int scale)
 		{
 			return (Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2))) * scale;
+		}
+		
+		public double calcDistance(Node n1, Node n2)
+		{
+			return (Math.sqrt((n1.getX()-n2.getX())*(n1.getX()-n2.getX()) + (n1.getY()-n2.getY())*(n1.getY()-n2.getY())));
 		}
 
 		public void printSquareInfo()
@@ -633,14 +751,24 @@ public class DevGUI extends JPanel{
 
 
 		public void remove(int n) {
+			
+			
+			for (int i = 0; i < currentStartEdges.size(); i++)
+			{
+		//		if(currentStartEdges.get(i).contains(currentStartNodes.get(n)))
+		//		currentStartEdges.remove(currentStartEdges.get(i));
+				
+			}
+			
+			
 
-			if (n < 0 || n >= squareCount)
-				return;
-			removeLinesAtSquare((int)squares[n].getX(), (int)squares[n].getY());
-			squareCount--;
-			squares[n] = squares[squareCount];
-			if (currentSquareIndex == n)
-				currentSquareIndex = -1;
+//			if (n < 0 || n >= squareCount)
+//				return;
+//			removeLinesAtSquare((int)squares[n].getX(), (int)squares[n].getY());
+//			squareCount--;
+//			squares[n] = squares[squareCount];
+//			if (currentSquareIndex == n)
+//				currentSquareIndex = -1;
 			repaint();
 
 
@@ -648,22 +776,49 @@ public class DevGUI extends JPanel{
 
 		public void produceNodes(){
 			nodes = "";
-			for (int i = 0; i < squareCount; i++){
-				nodes = nodes +"\nX: " + squares[i].getX() + "  Y: " + squares[i].getY();
+			for (int i = 0; i < currentStartNodes.size(); i++){
+				nodes = nodes +"\nX: " + currentStartNodes.get(i).getX() + "  Y: " + currentStartNodes.get(i).getY();
 			}
 			System.out.print(nodes);
 		}
 
 
 		public void produceEdges(){
-			for (int i = 0; i < edgeList.size(); i++){
-				System.out.println("Node n"+ i + " = new Node(" + 
+			for (int i = 0; i < currentStartEdges.size(); i++){
+				System.out.println("\nNode n"+ i + " = new Node(" + 
 									currentStartEdges.get(i).getNode1().getX() + ", " +  
 									currentStartEdges.get(i).getNode1().getY() + " );");
 				System.out.println("Node n"+ i + " = new Node(" + 
 									currentStartEdges.get(i).getNode2().getX() + ", " +  
 									currentStartEdges.get(i).getNode2().getY() + " );");
 			}
+		}
+		
+		public void removeEdgesToNode(int nodeIndex)
+		{
+			for (int i = 0; i < currentStartEdges.size(); i++)
+			{
+				if(currentStartEdges.get(i).getNode1().equals(currentStartNodes.get(nodeIndex))||
+				   currentStartEdges.get(i).getNode2().equals(currentStartNodes.get(nodeIndex)))
+				{
+					currentStartEdges.remove(currentStartEdges.get(i));
+				}
+			}
+			
+		}
+		
+		
+		public int getNodeIndex(int x, int y)
+		{
+			int thres = 10;
+			for (int i = 0; i < currentStartNodes.size(); i++)
+			{
+				if((currentStartNodes.get(i).getX() > x-thres)&&(currentStartNodes.get(i).getX() < x+thres) 
+				&& (currentStartNodes.get(i).getY() > y-thres)&&(currentStartNodes.get(i).getY() < y+thres))
+				return i;
+				
+			}
+			return -1;
 		}
 
 
@@ -672,7 +827,7 @@ public class DevGUI extends JPanel{
 			int x = evt.getX();
 			int y = evt.getY();
 
-			if (getSquare(x, y) >= 0)
+			if (getNodeIndex(x, y) >= 0)
 				setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 			else
 				setCursor(Cursor.getDefaultCursor());
@@ -691,18 +846,16 @@ public class DevGUI extends JPanel{
 		//        }
 		//        
 		public void mouseDragged(MouseEvent evt) {
-			//            int x = evt.getX();
-			//            int y = evt.getY();
-			//
-			//            if (currentSquareIndex >= 0) {
-			//                Graphics g = getGraphics();
-			//                g.setXORMode(getBackground());
-			//                ((Graphics2D)g).draw(squares[currentSquareIndex]);
-			//                squares[currentSquareIndex].x = x;
-			//                squares[currentSquareIndex].y = y;
-			//                ((Graphics2D)g).draw(squares[currentSquareIndex]);
-			//                g.dispose();
-			//            }
+			         int x = evt.getX();
+			         int y = evt.getY();
+					 
+			
+			           if (nodeIndex >= 0) 
+						{
+							currentStartNodes.get(nodeIndex).setX(x);
+							currentStartNodes.get(nodeIndex).setY(y);
+
+			            }
 		}
 	}
 	public Boolean getDeveloperMode(){

@@ -23,6 +23,16 @@ public class Map {
 		edges = new LinkedList<Edge>();
 	} 
 	
+	
+	
+	
+	public Map(BufferedImage img, String mapName){
+		this.mapImage = img;
+		this.mapName = mapName;
+		nodes = new LinkedList<Node>();
+		edges = new LinkedList<Edge>();
+	} 
+	
 	public BufferedImage getImage(){
 		return this.mapImage;
 	}
