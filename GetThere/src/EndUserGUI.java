@@ -36,6 +36,7 @@ import javax.swing.ScrollPaneConstants;
 
 ///**
 //* Created by Lumbini on 11/7/2015.
+//* modified by Jeff
 // * */
 //
 
@@ -46,12 +47,8 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	private static LinkedList<Node> currentStartNodes = new LinkedList<Node>();
 	private static LinkedList<Edge> currentStartEdges = new LinkedList<Edge>();
 	private static LinkedList<Node> currentEndNodes = new LinkedList<Node>();
-	//private static LinkedList<Edge> currentEndEdges = new LinkedList<Edge>();
 	private String[] startRooms;
 	private String[] endRooms = new String[100];
-//	private String buildingSelectedSTART;   //track which building is selected to start in.
-//	private String buildingSelectedEND;
-	//private String currentMapName;
 	private BufferedImage currentMapFile;
 
 	private JTextArea directions;
@@ -60,7 +57,6 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	private JPanel uiPanel;		//Panel to hold the interface buttons
 	private JPanel mapPanel;	//Panel to hold the map
 	private Image mapImage;		//Represents the map to be chosen
-	//private Image pathImage;	//Image that draws the path on the map
 
 	//Labels on the GUI
 	private JLabel startPoint;
@@ -69,14 +65,12 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	private JLabel endPoint;
 	private JLabel buildingEnd;
 	private JLabel roomEnd;
-	//private JLabel floorStart;
 
 	//Combo Boxes on the GUI
 	private JComboBox<String> startBuildingSEL;
 	private JComboBox<String> startRoomSEL;
 	private JComboBox<String> endBuildingSEL;
 	private JComboBox<String> endRoomSEL;
-	//private JComboBox startFloorSEL;
 
 	//Buttons on the UI
 	private JButton searchButton;
@@ -209,7 +203,6 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		//Add Labels to the uiPanel
 		uiPanel.add(startPoint);
 		uiPanel.add(buildingStart);
-		//uiPanel.add(floorStart);
 		uiPanel.add(roomStart);
 		uiPanel.add(endPoint);
 		uiPanel.add(buildingEnd);
