@@ -41,7 +41,7 @@ import java.awt.image.BufferedImage;
 //
 
 public class DevGUI extends JPanel{
-	
+
 	/**
 	 * 
 	 */
@@ -64,6 +64,9 @@ public class DevGUI extends JPanel{
 	boolean createSpecial = false;
 	boolean createEdges = false;
 	boolean importPushed = true;
+	boolean updateMap = false;
+	int indexOfCurrentMap;
+	private LinkedList<String> currentMapList;
 
 	public boolean developerMode = true;
 
@@ -83,12 +86,12 @@ public class DevGUI extends JPanel{
 	public DevGUI(){
 		initialize();
 	}
- 
+
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
-		
+
 		maps = (LinkedList<Map>) deserialize("MapList");
-				
+
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -100,7 +103,7 @@ public class DevGUI extends JPanel{
 			}
 		});
 	}
-	
+
 	// saves Map object "m" in a file named "s"
 	public void serialize(String s, LinkedList<Map> maplist){
 		try {
@@ -114,7 +117,7 @@ public class DevGUI extends JPanel{
 			i.printStackTrace();
 		}
 	}
-	
+
 	// loads the map stored in file name "s"
 	public static Object deserialize(String s){
 		Object m = null;
@@ -162,18 +165,18 @@ public class DevGUI extends JPanel{
 		//Creating Labels
 		buildingStart = new JLabel("Select Map:");
 		buildingStart.setBounds(762, 26, 132, 29);
-		
+
 		//Add Labels to the uiPanel
 		uiPanel.add(buildingStart);
-		
+
 		//Construct Combo boxes to select start point
+		currentMapList = new LinkedList<String>();
 		startBuildingSEL = new JComboBox<String>();
 		startBuildingSEL.setBounds(762, 46, 132, 29);
 		startBuildingSEL.setEditable(false);
 		startBuildingSEL.setVisible(true);
 		startBuildingSEL.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				int indexOfCurrentMap;
 				@SuppressWarnings("rawtypes")
 				JComboBox cb = (JComboBox)e.getSource();
 				buildingSelectedSTART = (String)cb.getSelectedItem();
@@ -188,19 +191,20 @@ public class DevGUI extends JPanel{
 				for(int i = 0; i < currentStartNodes.size(); ++i){
 					startRooms[i] = currentStartNodes.get(i).getName();
 				}
+				System.out.println("Updating maps");
 				uiPanel.repaint();
-		        frame.repaint();
+				frame.repaint();
 			}
 		});
-		
+
 		for (int i = 0; i < maps.size(); i++) {
 			if(maps.get(i).getMapName() != null)
 				startBuildingSEL.addItem(maps.get(i).getMapName());
-	    }
+				currentMapList.add(maps.get(i).getMapName());
+		}
 
 		//Add Combo Boxes to UIPanel
 		uiPanel.add(startBuildingSEL);
-
 
 		if(developerMode)
 		{
@@ -212,9 +216,10 @@ public class DevGUI extends JPanel{
 					loadMap = new SelectMap(window);
 					loadMap.setVisible(true);
 					loadMap.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+					updateMap = true;
 				}
 			});
-			
+
 			JButton btnCreateNodes = new JButton("Create Nodes");
 			btnCreateNodes.setBounds(762, 136, 132, 29);
 			uiPanel.add(btnCreateNodes);
@@ -238,7 +243,7 @@ public class DevGUI extends JPanel{
 					createEdges = false;
 				}
 			});
-			
+
 			//Construct button and add action listener
 			JButton btnMakeNeighbors = new JButton("Make Neighbors");
 			btnMakeNeighbors.setBounds(762, 196, 132, 29);
@@ -262,10 +267,26 @@ public class DevGUI extends JPanel{
 					m1.produceNodes();
 					m1.produceEdges();
 					serialize("MapList", maps);
+					if(updateMap){
+						
+						for (int i = 0; i < maps.size(); i++) {
+							if(maps.get(i).getMapName() != null){
+								if(!currentMapList.contains(maps.get(i).getMapName())){
+									startBuildingSEL.addItem(maps.get(i).getMapName());
+									currentMapList.add(maps.get(i).getMapName());
+								}
+							}
+						}
+						updateMap = false;
+					}
+					uiPanel.add(startBuildingSEL);
+					startBuildingSEL.setVisible(true);
+					uiPanel.repaint();
+					uiPanel.revalidate();
 				}
 			});
-			
-			
+
+
 			JButton btnDeleteMap = new JButton("Delete Map");
 			btnDeleteMap.setBounds(762, 286, 132, 29);
 			uiPanel.add(btnDeleteMap);
@@ -273,32 +294,32 @@ public class DevGUI extends JPanel{
 				public void actionPerformed(ActionEvent e){
 					System.out.println("Delete Map Pushed");
 					int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this map?", "Confirm",
-					        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-					
-				    if (response == JOptionPane.NO_OPTION) {
-				    	System.out.println("No button clicked");
-				    	
-				    } else if (response == JOptionPane.YES_OPTION) {
-					    System.out.println("Yes button clicked");
-					    for(int i = 0; i < maps.size(); ++i){
-					    	if(currentMapName == maps.get(i).getMapName())
-					    		maps.remove(i);
-					    }
-					    serialize("MapList", maps);
-					    
-				    } else if (response == JOptionPane.CLOSED_OPTION) {
-				    	System.out.println("JOptionPane closed");
-				    }	
+							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+					if (response == JOptionPane.NO_OPTION) {
+						System.out.println("No button clicked");
+
+					} else if (response == JOptionPane.YES_OPTION) {
+						System.out.println("Yes button clicked");
+						for(int i = 0; i < maps.size(); ++i){
+							if(currentMapName == maps.get(i).getMapName()){
+								maps.remove(i);
+							}
+						}
+						updateMap = true;
+						serialize("MapList", maps);
+
+					} else if (response == JOptionPane.CLOSED_OPTION) {
+						System.out.println("JOptionPane closed");
+					}	
 				}
 			});     
 		}    
-		
+
 		uiPanel.setVisible(true);
 		frame.setVisible(true);
 	}
-	
-	
-	
+
 	public class MouseEvents extends JComponent implements MouseMotionListener{
 		private static final long serialVersionUID = 1L;
 		private static final int SquareWidth = 5;
@@ -323,8 +344,8 @@ public class DevGUI extends JPanel{
 
 					System.out.println("\nX: " + x + "\t Y: " + y);
 					repaint();
-					
-					
+
+
 					if(createNodes){
 						if (nodeIndex < 0) // not inside a square
 							currentStartNodes.add(new Node(x, y));
@@ -333,48 +354,48 @@ public class DevGUI extends JPanel{
 						if (nodeIndex < 0){ // not inside a square
 							String nodeName = JOptionPane.showInputDialog("Enter Node Name:");
 							if(nodeName == null || (nodeName != null && ("".equals(nodeName)))){
-							    return;
+								return;
 							} else {
 								String[] types = {"No Type", "Bathroom", "Blue Tower", "Elevator", 
-													"Stairs Up", "Stairs Down", "Food", "Emergency Exit"};
+										"Stairs Up", "Stairs Down", "Food", "Emergency Exit"};
 								Object selectedValue = JOptionPane.showInputDialog(null,
-							             "Choose a Node Type", "Input",
-							             JOptionPane.INFORMATION_MESSAGE, null,
-							             types, types[0]);
+										"Choose a Node Type", "Input",
+										JOptionPane.INFORMATION_MESSAGE, null,
+										types, types[0]);
 								switch((String)selectedValue){
-									case "No Type":
-										currentStartNodes.add(new Node(x, y, nodeName, NodeType.NOTYPE));
-										break;
-									case "Bathroom":
-										currentStartNodes.add(new Node(x, y, nodeName, NodeType.BATHROOM));
-										break;
-									case "Blue Tower":
-										currentStartNodes.add(new Node(x, y, nodeName, NodeType.BLUETOWER));
-										break;
-									case "Elevator":
-										currentStartNodes.add(new Node(x, y, nodeName, NodeType.ELEVATOR));
-										break;
-									case "Stairs Up":
-										currentStartNodes.add(new Node(x, y, nodeName, NodeType.STAIRSUP));
-										break;
-									case "Stairs Down":
-										currentStartNodes.add(new Node(x, y, nodeName, NodeType.STAIRSDOWN));
-										break;
-									case "Food":
-										currentStartNodes.add(new Node(x, y, nodeName, NodeType.FOOD));
-										break;
-									case "Emergency Exit":
-										currentStartNodes.add(new Node(x, y, nodeName, NodeType.EMERGEXIT));
-										break;
-									default:
-										currentStartNodes.add(new Node(x, y, nodeName, NodeType.NOTYPE));
+								case "No Type":
+									currentStartNodes.add(new Node(x, y, nodeName, NodeType.NOTYPE));
+									break;
+								case "Bathroom":
+									currentStartNodes.add(new Node(x, y, nodeName, NodeType.BATHROOM));
+									break;
+								case "Blue Tower":
+									currentStartNodes.add(new Node(x, y, nodeName, NodeType.BLUETOWER));
+									break;
+								case "Elevator":
+									currentStartNodes.add(new Node(x, y, nodeName, NodeType.ELEVATOR));
+									break;
+								case "Stairs Up":
+									currentStartNodes.add(new Node(x, y, nodeName, NodeType.STAIRSUP));
+									break;
+								case "Stairs Down":
+									currentStartNodes.add(new Node(x, y, nodeName, NodeType.STAIRSDOWN));
+									break;
+								case "Food":
+									currentStartNodes.add(new Node(x, y, nodeName, NodeType.FOOD));
+									break;
+								case "Emergency Exit":
+									currentStartNodes.add(new Node(x, y, nodeName, NodeType.EMERGEXIT));
+									break;
+								default:
+									currentStartNodes.add(new Node(x, y, nodeName, NodeType.NOTYPE));
 								}
 							}
 						}
 					}
-					
+
 					if(createEdges){
-					
+
 						if(count == 0 && nodeIndex >= 0){
 							staringEdgeIndex = nodeIndex;
 							System.out.println(nodeIndex);
@@ -382,18 +403,18 @@ public class DevGUI extends JPanel{
 						} else if(count > 0 && nodeIndex >= 0){
 							System.out.println(nodeIndex);
 							currentStartEdges.add(new Edge(currentStartNodes.get(staringEdgeIndex), 
-															currentStartNodes.get(nodeIndex),
-															(int) calcDistance(currentStartNodes.get(staringEdgeIndex), currentStartNodes.get(nodeIndex))));
+									currentStartNodes.get(nodeIndex),
+									(int) calcDistance(currentStartNodes.get(staringEdgeIndex), currentStartNodes.get(nodeIndex))));
 							count = 0;
 						}
 					}
-					
+
 					if (evt.getClickCount() >= 2 && (createNodes || createSpecial)) {
-						
+
 						LinkedList<Edge> tempList = new LinkedList<Edge>();
 						for (int i = 0; i < currentStartEdges.size(); i++){
 							if(currentStartEdges.get(i).getNode1().equals(currentStartNodes.get(nodeIndex))||
-							   currentStartEdges.get(i).getNode2().equals(currentStartNodes.get(nodeIndex)))
+									currentStartEdges.get(i).getNode2().equals(currentStartNodes.get(nodeIndex)))
 							{
 								tempList.add(currentStartEdges.get(i));
 							}
@@ -443,7 +464,7 @@ public class DevGUI extends JPanel{
 		{
 			return (Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2))) * scale;
 		}
-		
+
 		public double calcDistance(Node n1, Node n2)
 		{
 			return (Math.sqrt((n1.getX()-n2.getX())*(n1.getX()-n2.getX()) + (n1.getY()-n2.getY())*(n1.getY()-n2.getY())));
@@ -461,37 +482,37 @@ public class DevGUI extends JPanel{
 		public void produceEdges(){
 			for (int i = 0; i < currentStartEdges.size(); i++){
 				System.out.println("\nNode n"+ i + " = new Node(" + 
-									currentStartEdges.get(i).getNode1().getX() + ", " +  
-									currentStartEdges.get(i).getNode1().getY() + " );");
+						currentStartEdges.get(i).getNode1().getX() + ", " +  
+						currentStartEdges.get(i).getNode1().getY() + " );");
 				System.out.println("Node n"+ i + " = new Node(" + 
-									currentStartEdges.get(i).getNode2().getX() + ", " +  
-									currentStartEdges.get(i).getNode2().getY() + " );");
+						currentStartEdges.get(i).getNode2().getX() + ", " +  
+						currentStartEdges.get(i).getNode2().getY() + " );");
 			}
 		}
-		
+
 		public void removeEdgesToNode(int nodeIndex)
 		{
 			for (int i = 0; i < currentStartEdges.size(); i++)
 			{
 				if(currentStartEdges.get(i).getNode1().equals(currentStartNodes.get(nodeIndex))||
-				   currentStartEdges.get(i).getNode2().equals(currentStartNodes.get(nodeIndex)))
+						currentStartEdges.get(i).getNode2().equals(currentStartNodes.get(nodeIndex)))
 				{
 					currentStartEdges.remove(currentStartEdges.get(i));
 				}
 			}
-			
+
 		}
-		
-		
+
+
 		public int getNodeIndex(int x, int y)
 		{
 			int thres = 10;
 			for (int i = 0; i < currentStartNodes.size(); i++)
 			{
 				if((currentStartNodes.get(i).getX() > x-thres)&&(currentStartNodes.get(i).getX() < x+thres) 
-				&& (currentStartNodes.get(i).getY() > y-thres)&&(currentStartNodes.get(i).getY() < y+thres))
-				return i;
-				
+						&& (currentStartNodes.get(i).getY() > y-thres)&&(currentStartNodes.get(i).getY() < y+thres))
+					return i;
+
 			}
 			return -1;
 		}
@@ -506,16 +527,16 @@ public class DevGUI extends JPanel{
 				setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 			else
 				setCursor(Cursor.getDefaultCursor());
-   		}
-		
+		}
+
 		public void mouseDragged(MouseEvent evt) {
-		    int x = evt.getX();
-		    int y = evt.getY();
-		
-		    if(nodeIndex >= 0) {
+			int x = evt.getX();
+			int y = evt.getY();
+
+			if(nodeIndex >= 0) {
 				currentStartNodes.get(nodeIndex).setX(x);
 				currentStartNodes.get(nodeIndex).setY(y);
-		    }
+			}
 		}
 	}
 	public Boolean getDeveloperMode(){
