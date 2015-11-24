@@ -22,6 +22,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import java.util.*;
 import java.io.FileInputStream;
@@ -59,6 +61,7 @@ public class DevGUI extends JPanel{
 	String inputVar = "src/output.txt";
 
 	boolean createNodes = false;
+	boolean createSpecial = false;
 	boolean createEdges = false;
 	boolean importPushed = true;
 
@@ -219,25 +222,39 @@ public class DevGUI extends JPanel{
 				public void actionPerformed(ActionEvent e){
 					System.out.println("Create Nodes Pushed");
 					createNodes = true;
+					createSpecial = false;
 					createEdges = false;
 				}
 			});
 
+			JButton btnCreateSpecialNodes = new JButton("Create Special");
+			btnCreateSpecialNodes.setBounds(762, 166, 132, 29);
+			uiPanel.add(btnCreateSpecialNodes);
+			btnCreateSpecialNodes.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e){
+					System.out.println("Create Special Nodes Pushed.");
+					createNodes = false;
+					createSpecial = true;
+					createEdges = false;
+				}
+			});
+			
 			//Construct button and add action listener
 			JButton btnMakeNeighbors = new JButton("Make Neighbors");
-			btnMakeNeighbors.setBounds(762, 166, 132, 29);
+			btnMakeNeighbors.setBounds(762, 196, 132, 29);
 			uiPanel.add(btnMakeNeighbors);
 			btnMakeNeighbors.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e){
 					System.out.println("Make Neighbors Pushed");
 					createNodes = false;
+					createSpecial = false;
 					createEdges = true;
 				}
 			});
 
 			//Construct button and add action listener
 			JButton btnExport = new JButton("Save Changes");
-			btnExport.setBounds(762, 196, 132, 29);
+			btnExport.setBounds(762, 226, 132, 29);
 			uiPanel.add(btnExport);
 			btnExport.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e){
@@ -250,7 +267,7 @@ public class DevGUI extends JPanel{
 			
 			
 			JButton btnDeleteMap = new JButton("Delete Map");
-			btnDeleteMap.setBounds(762, 256, 132, 29);
+			btnDeleteMap.setBounds(762, 286, 132, 29);
 			uiPanel.add(btnDeleteMap);
 			btnDeleteMap.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e){
@@ -312,6 +329,12 @@ public class DevGUI extends JPanel{
 						if (nodeIndex < 0) // not inside a square
 							currentStartNodes.add(new Node(x, y));
 					}
+					if(createSpecial){
+						if (nodeIndex < 0){ // not inside a square
+							String nodeName = JOptionPane.showInputDialog("Enter Node Name:");
+							currentStartNodes.add(new Node(x, y, nodeName));
+						}
+					}
 					
 					if(createEdges){
 					
@@ -328,7 +351,7 @@ public class DevGUI extends JPanel{
 						}
 					}
 					
-					if (evt.getClickCount() >= 2 && createNodes) {
+					if (evt.getClickCount() >= 2 && (createNodes || createSpecial)) {
 						
 						LinkedList<Edge> tempList = new LinkedList<Edge>();
 						for (int i = 0; i < currentStartEdges.size(); i++){

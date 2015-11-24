@@ -196,9 +196,6 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		roomStart = new JLabel("Select Room:");
 		roomStart.setBounds(900, 26, 132, 29);
 
-		//		floorStart = new JLabel("Select Floor:");
-		//		floorStart.setBounds(762, 110, 132, 29);
-
 		endPoint = new JLabel("TO");
 		endPoint.setBounds(780, 72, 132, 29);
 
@@ -238,7 +235,6 @@ public class EndUserGUI extends JPanel implements ActionListener{
 					if(buildingSelectedSTART.equals(maps.get(indexOfCurrentMap).getMapName()))
 						break;
 				}
-				//currentMapName = maps.get(indexOfCurrentMap).getMapName();
 				currentStartNodes = maps.get(indexOfCurrentMap).getNodes();
 				startRooms = new String[currentStartNodes.size()];
 				currentStartEdges = maps.get(indexOfCurrentMap).getEdges();
@@ -279,9 +275,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 					if(buildingSelectedEND.equals(maps.get(indexOfCurrentMap).getMapName()))
 						break;
 				}
-				//currentMapName = maps.get(indexOfCurrentMap).getMapName();
 				currentEndNodes = maps.get(indexOfCurrentMap).getNodes();
-				//currentEndEdges = maps.get(indexOfCurrentMap).getEdges();
 				currentMapFile = maps.get(indexOfCurrentMap).getImage();
 				endRoomSEL.removeAllItems();
 				for(int i = 0; i < currentEndNodes.size(); ++i){
@@ -305,7 +299,6 @@ public class EndUserGUI extends JPanel implements ActionListener{
 
 		uiPanel.add(startBuildingSEL);
 		uiPanel.add(startRoomSEL);
-		//uiPanel.add(startFloorSEL);
 		uiPanel.add(endBuildingSEL);
 		uiPanel.add(endRoomSEL);
 
@@ -342,12 +335,8 @@ public class EndUserGUI extends JPanel implements ActionListener{
 			{
 				int i;
 				updatePath = true;
-//				if(startFloorSEL.getSelectedItem() == "Test"){
-//					updatePath = true;
-//				}else updatePath = false;
 				uiPanel.setVisible(true);
 				frame.setVisible(true);
-				//GeneralPath path = null;
 				pathCalc = new Djikstra();
 
 				for (i = 0; i < currentStartNodes.size(); i++){
@@ -417,17 +406,11 @@ public class EndUserGUI extends JPanel implements ActionListener{
 				removeAll();
 				int i;
 				path = new GeneralPath();
-				// JLabel start = new JLabel("Start");
-				// JLabel end = new JLabel("End");
-				// start.setBounds((listPath.getFirst().getX()*25)-12, (listPath.getFirst().getY()*25)-60, 100, 100);
-				// end.setBounds((listPath.getLast().getX()*25)-8, (listPath.getLast().getY()*25)-60, 100, 100);
 				path.moveTo(listPath.getFirst().getX(), listPath.getFirst().getY()); 
 				for (i=0; i<listPath.size(); i++){
 					path.lineTo(listPath.get(i).getX(),listPath.get(i).getY());
 					g2d.draw(path);
 				}
-				// this.add(start);
-				// this.add(end);
 				g2d.draw(path);
 				g2d.setStroke(new BasicStroke(3));
 				g2d.setColor(Color.RED);
