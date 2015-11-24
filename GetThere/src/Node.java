@@ -21,6 +21,7 @@ public class Node implements Serializable{
 		this.x = x;
 		this.y = y;
 		this.name = 'x' + Integer.toString(x) + 'y' + Integer.toString(y);
+		this.type = NodeType.NOTYPE;
 		this.possibleNodes = new LinkedList<Node>();
 		this.EdgesList = new LinkedList<Edge>();
 	}
@@ -29,10 +30,19 @@ public class Node implements Serializable{
 		this.x = x;
 		this.y = y;
 		this.name = name;
+		this.type = NodeType.NOTYPE;
 		this.possibleNodes = new LinkedList<Node>();
 		this.EdgesList = new LinkedList<Edge>();
 	}
-	 
+	
+	public Node(int x, int y, String name, NodeType t){
+		this.x = x;
+		this.y = y;
+		this.name = name;
+		this.type = t;
+		this.possibleNodes = new LinkedList<Node>();
+		this.EdgesList = new LinkedList<Edge>();
+	}	 
 	
 	public int getPriority(){
 		return this.priority;

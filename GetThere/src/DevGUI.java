@@ -332,7 +332,44 @@ public class DevGUI extends JPanel{
 					if(createSpecial){
 						if (nodeIndex < 0){ // not inside a square
 							String nodeName = JOptionPane.showInputDialog("Enter Node Name:");
-							currentStartNodes.add(new Node(x, y, nodeName));
+							if(nodeName == null || (nodeName != null && ("".equals(nodeName)))){
+							    return;
+							} else {
+								String[] types = {"No Type", "Bathroom", "Blue Tower", "Elevator", 
+													"Stairs Up", "Stairs Down", "Food", "Emergency Exit"};
+								Object selectedValue = JOptionPane.showInputDialog(null,
+							             "Choose a Node Type", "Input",
+							             JOptionPane.INFORMATION_MESSAGE, null,
+							             types, types[0]);
+								switch((String)selectedValue){
+									case "No Type":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.NOTYPE));
+										break;
+									case "Bathroom":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.BATHROOM));
+										break;
+									case "Blue Tower":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.BLUETOWER));
+										break;
+									case "Elevator":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.ELEVATOR));
+										break;
+									case "Stairs Up":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.STAIRSUP));
+										break;
+									case "Stairs Down":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.STAIRSDOWN));
+										break;
+									case "Food":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.FOOD));
+										break;
+									case "Emergency Exit":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.EMERGEXIT));
+										break;
+									default:
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.NOTYPE));
+								}
+							}
 						}
 					}
 					
