@@ -523,8 +523,13 @@ public class DevGUI extends JPanel{
 			int x = evt.getX();
 			int y = evt.getY();
 
-			if (getNodeIndex(x, y) >= 0)
+			if (getNodeIndex(x, y) >= 0){
 				setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+				setToolTipText("Node: " + getNodeIndex(x, y) 
+							 + " Name: " + currentStartNodes.get(getNodeIndex(x, y)).getName());
+				show();
+				
+				}
 			else
 				setCursor(Cursor.getDefaultCursor());
 		}
