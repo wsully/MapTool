@@ -447,7 +447,7 @@ public class DevGUI extends JPanel{
 			g2d.setColor(Color.BLACK);
 
 			for (int i = 0; i < currentStartNodes.size(); i++){
-				((Graphics2D)g).draw(new Rectangle (currentStartNodes.get(i).getX(), currentStartNodes.get(i).getY(), SquareWidth, SquareWidth));
+				((Graphics2D)g).draw(new Rectangle (currentStartNodes.get(i).getX()-SquareWidth/2, currentStartNodes.get(i).getY()-SquareWidth/2, SquareWidth, SquareWidth));
 			}
 
 			for (int i = 0; i < currentStartEdges.size(); i++){
