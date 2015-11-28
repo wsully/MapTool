@@ -34,6 +34,20 @@ import java.io.FileOutputStream;
 
 import java.awt.image.BufferedImage;
 
+
+import java.awt.event.KeyEvent;
+import java.awt.geom.*;
+import javax.swing.event.*;
+
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+
 ///**
 //* Created by Lumbini on 11/7/2015.
 //* modified by Billy and Jeff
@@ -45,6 +59,8 @@ public class DevGUI extends JPanel{
 	/**
 	 * 
 	 */
+    int scale = 1;
+	
 	private static final long serialVersionUID = 2270760135813536905L;
 	public static LinkedList<Map> maps = new LinkedList<Map>();
 	private static LinkedList<Node> currentStartNodes = new LinkedList<Node>();
@@ -158,9 +174,21 @@ public class DevGUI extends JPanel{
 
 		mapPanel = new JPanel();
 		mapPanel.setBounds(5, 5, 750, 650);
+		
+		frame.setSize(400, 400);
+		
 		uiPanel.add(mapPanel);
+		
+		frame.getContentPane().add(new JScrollPane(mapPanel));
+		
 		MouseEvents m1 = new MouseEvents();
+		
 		mapPanel.add(m1);
+		
+		
+		//frame.getContentPane().add(this.getControl(), "Last");
+		
+		 
 
 		//Creating Labels
 		buildingStart = new JLabel("Select Map:");
@@ -241,6 +269,7 @@ public class DevGUI extends JPanel{
 					createNodes = false;
 					createSpecial = true;
 					createEdges = false;
+					
 				}
 			});
 
@@ -285,6 +314,10 @@ public class DevGUI extends JPanel{
 					uiPanel.revalidate();
 				}
 			});
+			
+			
+			
+			
 
 
 			JButton btnDeleteMap = new JButton("Delete Map");
@@ -319,6 +352,16 @@ public class DevGUI extends JPanel{
 		uiPanel.setVisible(true);
 		frame.setVisible(true);
 	}
+	
+
+	
+
+	
+	
+	
+	
+	
+	
 
 	public class MouseEvents extends JComponent implements MouseMotionListener{
 		private static final long serialVersionUID = 1L;
@@ -331,16 +374,16 @@ public class DevGUI extends JPanel{
 			addMouseMotionListener(this);
 			addMouseListener(new MouseAdapter(){
 				public void mousePressed(MouseEvent evt) {
-					int x = evt.getX();
-					int y = evt.getY();
+					int x = evt.getX()/scale;
+					int y = evt.getY()/scale;
 					nodeIndex = getNodeIndex(x, y);			
 				}
 				int staringEdgeIndex;
 				int count = 0;
 
 				public void mouseClicked(MouseEvent evt) {
-					int x = evt.getX();
-					int y = evt.getY();
+					int x = evt.getX()/scale;
+					int y = evt.getY()/scale;
 
 					System.out.println("\nX: " + x + "\t Y: " + y);
 					repaint();
@@ -408,6 +451,22 @@ public class DevGUI extends JPanel{
 							count = 0;
 						}
 					}
+					
+					
+					
+					if (evt.getClickCount() == 2 && (!createNodes && !createSpecial)){
+					scale++;
+					System.out.print(scale);
+					repaint();
+					}else if (evt.getClickCount() == 3 && (!createNodes && !createSpecial) && scale > 2){
+					scale--;
+					scale--;
+					System.out.print(scale);
+					repaint();
+					}
+					
+					
+					
 
 					if (evt.getClickCount() >= 2 && (createNodes || createSpecial)) {
 
@@ -428,11 +487,13 @@ public class DevGUI extends JPanel{
 			addMouseMotionListener(this);
 
 		}
+	
+		
 		@Override
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 
-			g.drawImage(currentMapFile, 0, 0, this);
+		//	g.drawImage(currentMapFile, 0, 0, this);
 			repaint();
 			revalidate();
 
@@ -445,15 +506,56 @@ public class DevGUI extends JPanel{
 					BasicStroke.JOIN_ROUND);
 			g2d.setStroke(s);
 			g2d.setColor(Color.BLACK);
+			
+			
+			
+			
+			
+		
+			// Keep shapes centered on panel.
+			int w = mapPanel.getWidth();
+			int h = mapPanel.getHeight();
+			
+			
+			//double x = (getWidth()  - scale*w)/2;
+			//double y = (getHeight() - scale*h)/2;
+			
+			int x = 0;
+			int y = 0;
+			
+			
+			
+			AffineTransform at = AffineTransform.getTranslateInstance(x, y);
+			at.scale(scale, scale);
+
+
+			//g2d.draw(at.createTransformedShape( new Image(currentMapFile, 0, 0, this);
+			
+			g2d.drawImage(currentMapFile, x, y, w, h,     /* dst rectangle */
+			0, 0, w/scale, h/scale, this);
+			repaint();
+			revalidate();
 
 			for (int i = 0; i < currentStartNodes.size(); i++){
-				((Graphics2D)g).draw(new Rectangle (currentStartNodes.get(i).getX()-SquareWidth/2, currentStartNodes.get(i).getY()-SquareWidth/2, SquareWidth, SquareWidth));
+				g2d.draw(at.createTransformedShape(new Rectangle (currentStartNodes.get(i).getX()-SquareWidth/2, currentStartNodes.get(i).getY()-SquareWidth/2, SquareWidth, SquareWidth)));
+				
 			}
 
 			for (int i = 0; i < currentStartEdges.size(); i++){
-				((Graphics2D)g).draw(new Line2D.Double(currentStartEdges.get(i).getNode1().getX(), currentStartEdges.get(i).getNode1().getY(),currentStartEdges.get(i).getNode2().getX(),currentStartEdges.get(i).getNode2().getY() ));
+				g2d.draw(at.createTransformedShape(new Line2D.Double(currentStartEdges.get(i).getNode1().getX(), currentStartEdges.get(i).getNode1().getY(),currentStartEdges.get(i).getNode2().getX(),currentStartEdges.get(i).getNode2().getY() )));
 			}
 		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 
 		public double calcDistance(int x1, int y1, int x2, int y2)
 		{
@@ -520,8 +622,8 @@ public class DevGUI extends JPanel{
 
 
 		public void mouseMoved(MouseEvent evt) {
-			int x = evt.getX();
-			int y = evt.getY();
+			int x = evt.getX()/scale;
+			int y = evt.getY()/scale;
 
 			if (getNodeIndex(x, y) >= 0){
 				setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
@@ -535,8 +637,8 @@ public class DevGUI extends JPanel{
 		}
 
 		public void mouseDragged(MouseEvent evt) {
-			int x = evt.getX();
-			int y = evt.getY();
+			int x = evt.getX()/scale;
+			int y = evt.getY()/scale;
 
 			if(nodeIndex >= 0) {
 				currentStartNodes.get(nodeIndex).setX(x);
@@ -550,5 +652,9 @@ public class DevGUI extends JPanel{
 	public void setDeveloperMode(Boolean modeSelect){
 		this.developerMode = modeSelect;
 	}
+	
+
+	
+	
 
 }
