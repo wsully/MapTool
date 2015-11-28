@@ -10,6 +10,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.GeneralPath;
@@ -36,7 +37,6 @@ import javax.swing.ScrollPaneConstants;
 
 ///**
 //* Created by Lumbini on 11/7/2015.
-//* modified by Jeff
 // * */
 //
 
@@ -47,9 +47,17 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	private static LinkedList<Node> currentStartNodes = new LinkedList<Node>();
 	private static LinkedList<Edge> currentStartEdges = new LinkedList<Edge>();
 	private static LinkedList<Node> currentEndNodes = new LinkedList<Node>();
+	//private static LinkedList<Edge> currentEndEdges = new LinkedList<Edge>();
 	private String[] startRooms;
 	private String[] endRooms = new String[100];
+//	private String buildingSelectedSTART;   //track which building is selected to start in.
+//	private String buildingSelectedEND;
+	//private String currentMapName;
 	private BufferedImage currentMapFile;
+	
+	private boolean startClicked = false;
+	private boolean endClicked = false;
+	
 
 	private JTextArea directions;
 
@@ -57,6 +65,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	private JPanel uiPanel;		//Panel to hold the interface buttons
 	private JPanel mapPanel;	//Panel to hold the map
 	private Image mapImage;		//Represents the map to be chosen
+	//private Image pathImage;	//Image that draws the path on the map
 
 	//Labels on the GUI
 	private JLabel startPoint;
@@ -65,12 +74,14 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	private JLabel endPoint;
 	private JLabel buildingEnd;
 	private JLabel roomEnd;
+	//private JLabel floorStart;
 
 	//Combo Boxes on the GUI
 	private JComboBox<String> startBuildingSEL;
 	private JComboBox<String> startRoomSEL;
 	private JComboBox<String> endBuildingSEL;
 	private JComboBox<String> endRoomSEL;
+	//private JComboBox startFloorSEL;
 
 	//Buttons on the UI
 	private JButton searchButton;
@@ -203,6 +214,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		//Add Labels to the uiPanel
 		uiPanel.add(startPoint);
 		uiPanel.add(buildingStart);
+		//uiPanel.add(floorStart);
 		uiPanel.add(roomStart);
 		uiPanel.add(endPoint);
 		uiPanel.add(buildingEnd);
@@ -362,7 +374,43 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		MyGraphics() {
 			setPreferredSize(new Dimension(760, 666));
 			addMouseMotionListener(this);
-		}
+			addMouseListener(new MouseAdapter(){
+				public void mouseClicked(MouseEvent evt) {
+					int x = evt.getX();
+					int y = evt.getY();
+					System.out.println("Click " + x + "..."+ y);
+					if(!startClicked){
+						startNode = findClosestNode(x,y);
+						System.out.println("Closest start node has x = " + startNode.getX() + " and y = "+ startNode.getY());
+						startClicked = true;
+					}
+					else if(!endClicked){
+						endNode = findClosestNode(x,y);
+						System.out.println("Closest end node has x = " + endNode.getX() + " and y = "+ endNode.getY());
+						endClicked = true;
+					}
+					else{
+						System.out.println("Start and end nodes have already been selected");
+					}
+					
+				}
+
+				private Node findClosestNode(int x, int y) {
+					double shortestDistance = Double.MAX_VALUE;
+					double previousShortestDistance;
+					Node result = null;
+					for(int i = 0; i < currentStartNodes.size(); i++){
+						previousShortestDistance = shortestDistance;
+						Node temp = currentStartNodes.get(i);
+						shortestDistance = Math.min(Math.sqrt((temp.getX()-x)*(temp.getX()-x) + (temp.getY()-y)*(temp.getY()-y)), shortestDistance);
+						if(previousShortestDistance != shortestDistance){
+							result = temp;
+						}
+					}
+					return result;
+				}});
+			addMouseMotionListener(this);
+			}
 
 		@Override
 		public void paintComponent(Graphics g) {
@@ -424,14 +472,16 @@ public class EndUserGUI extends JPanel implements ActionListener{
 			// TODO Auto-generated method stub
 			int x = e.getX();
 			int y = e.getY();
-			System.out.println("X: " + x + " Y: " +y);
+			//System.out.println("X: " + x + " Y: " +y);
 
 		}
-		public void mousePressed(MouseEvent evt) {
-			int x = evt.getX();
-			int y = evt.getY();
+		public void mousePressed(MouseEvent e) {
+			int x = e.getX();
+			int y = e.getY();
 			System.out.println("X: " + x + " Y: " +y);
 		}
+		
+		
 	}
 
 	@Override
