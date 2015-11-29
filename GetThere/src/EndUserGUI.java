@@ -24,16 +24,21 @@ import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.basic.ComboPopup;
 
 ///**
 //* Created by Lumbini on 11/7/2015.
@@ -78,9 +83,9 @@ public class EndUserGUI extends JPanel implements ActionListener{
 
 	//Combo Boxes on the GUI
 	private JComboBox<String> startBuildingSEL;
-	private JComboBox<String> startRoomSEL;
+	private XComboBox startRoomSEL = new XComboBox();
 	private JComboBox<String> endBuildingSEL;
-	private JComboBox<String> endRoomSEL;
+	private XComboBox endRoomSEL = new XComboBox();
 	//private JComboBox startFloorSEL;
 
 	//Buttons on the UI
@@ -220,7 +225,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		uiPanel.add(buildingEnd);
 		uiPanel.add(roomEnd);
 		
-		startRoomSEL = new JComboBox<String>();
+		startRoomSEL.setModel(new DefaultComboBoxModel(new String[]{}));
 		startRoomSEL.setBounds(893, 50, 132, 29);
 		startRoomSEL.setEditable(false);
 		startRoomSEL.setVisible(true);
@@ -260,7 +265,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	        	startBuildingSEL.addItem(maps.get(i).getMapName());
 	    }
 
-		endRoomSEL = new JComboBox<String>();
+		endRoomSEL.setModel(new DefaultComboBoxModel(new String[]{}));
 		endRoomSEL.setBounds(893, 116, 132, 29);
 		endRoomSEL.setEditable(false);
 		endRoomSEL.setVisible(true);
@@ -488,5 +493,58 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	public class XComboBox extends JComboBox {
+
+	    private ListSelectionListener listener;
+
+	    public XComboBox() {
+	        uninstall();
+	        install();
+	    }
+
+	    @Override
+	    public void updateUI() {
+	        uninstall();
+	        super.updateUI();
+	        install();
+	    }
+
+	    private void uninstall() {
+	        if (listener == null) return;
+	        getPopupList().removeListSelectionListener(listener);
+	        listener = null;
+	    }
+
+	    protected void install() {
+	        listener = new ListSelectionListener() {
+	            @Override
+	            public void valueChanged(ListSelectionEvent e) {
+	                if (e.getValueIsAdjusting()) return;
+
+	                JList list = getPopupList();
+	                Node n = getNodeByName(String.valueOf(list.getSelectedValue()));
+	                if (n != null)
+	                System.out.println("--> " + n.getX() + "---" + n.getY());
+	            }
+
+				private Node getNodeByName(String name) {
+					for(int i = 0; i < currentStartNodes.size(); i++){
+						if(currentStartNodes.get(i).getName().equals(name)){
+							return currentStartNodes.get(i);
+						}
+					}
+					return null;
+				}
+	        };
+	        getPopupList().addListSelectionListener(listener);
+	    }
+
+	    private JList getPopupList() {
+	        ComboPopup popup = (ComboPopup) getUI().getAccessibleChild(this, 0);
+	        return popup.getList();
+
+	    }
 	}
 }
