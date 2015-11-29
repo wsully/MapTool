@@ -3,6 +3,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -46,7 +47,7 @@ import javax.swing.plaf.basic.ComboPopup;
 //
 
 public class EndUserGUI extends JPanel implements ActionListener{
-	
+						
 	private static final long serialVersionUID = 2270760135813536905L;
 	private static LinkedList<Map> maps = new LinkedList<Map>();
 	private static LinkedList<Node> currentStartNodes = new LinkedList<Node>();
@@ -105,7 +106,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	private String buildingSelectedSTART;	//track which building is selected to start in.
 	private String buildingSelectedEND;		//track which building is selected to end in.
 	public ImageIcon mapIcon;
-
+	private Node hovered;
 
 	private int floor = -1;
 
@@ -237,6 +238,8 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		startBuildingSEL.setVisible(true);
 		startBuildingSEL.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
+				repaint();
+				revalidate();
 				int indexOfCurrentMap;
 				@SuppressWarnings("unchecked")
 				JComboBox<String> cb = (JComboBox<String>)e.getSource();
@@ -277,6 +280,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		endBuildingSEL.setVisible(true);
 		endBuildingSEL.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
+				
 				int indexOfCurrentMap;
 				@SuppressWarnings("unchecked")
 				JComboBox<String> cb = (JComboBox<String>)e.getSource();
@@ -332,6 +336,8 @@ public class EndUserGUI extends JPanel implements ActionListener{
 
 		directions = new JTextArea();
 		directions.setBounds(762, 210, 255, 450);
+		directions.setFont(new Font("Helvetica Neue", Font.PLAIN, 13));
+		directions.setLineWrap(true);
 		directions.setEditable(false);
 		JScrollPane scrollDire = new JScrollPane(directions);
 		scrollDire.setBounds(762, 210, 255, 450);
@@ -348,23 +354,29 @@ public class EndUserGUI extends JPanel implements ActionListener{
 				uiPanel.setVisible(true);
 				frame.setVisible(true);
 				pathCalc = new Djikstra();
-
-				for (i = 0; i < currentStartNodes.size(); i++){
-					if(startRoomSEL.getSelectedItem() == currentStartNodes.get(i).getName())
-						startNode = currentStartNodes.get(i);
+				if(!startClicked && !endClicked){
+					for (i = 0; i < currentStartNodes.size(); i++){
+						if(startRoomSEL.getSelectedItem() == currentStartNodes.get(i).getName())
+							startNode = currentStartNodes.get(i);
+					}
+					for(i = 0; i < currentEndNodes.size(); i++){
+						if(endRoomSEL.getSelectedItem() == currentEndNodes.get(i).getName())
+							endNode = currentEndNodes.get(i);
+					}
 				}
-				for(i = 0; i < currentEndNodes.size(); i++){
-					if(endRoomSEL.getSelectedItem() == currentEndNodes.get(i).getName())
-						endNode = currentEndNodes.get(i);
+				if(startClicked && !endClicked){
+					directions.setText("Please Select End point");
+					updatePath = false;
 				}
-
-				System.out.println(startBuildingSEL.getSelectedItem());
-				System.out.println(floor);
-				listPath = pathCalc.navigate(startNode, endNode);
-				directions.setText(pathCalc.gpsInstructions(pathCalc.navigate(startNode, endNode)));
-				System.out.println("check List: " + listPath.size());
-				repaint();
-				revalidate();
+				if(updatePath){
+					System.out.println(startBuildingSEL.getSelectedItem());
+					System.out.println(floor);
+					listPath = pathCalc.navigate(startNode, endNode);
+					directions.setText(pathCalc.gpsInstructions(pathCalc.navigate(startNode, endNode)));
+					System.out.println("check List: " + listPath.size());
+					repaint();
+					revalidate();
+				}
 			}
 		});
 
@@ -376,6 +388,8 @@ public class EndUserGUI extends JPanel implements ActionListener{
 
 		private static final long serialVersionUID = 1L;
 		private static final int SquareWidth = 5;
+		private static final int CircleDiam = 10;
+
 		MyGraphics() {
 			setPreferredSize(new Dimension(760, 666));
 			addMouseMotionListener(this);
@@ -431,19 +445,20 @@ public class EndUserGUI extends JPanel implements ActionListener{
 			
 			g.drawImage(mapImage, 0, 0, this);
 			
-			for (int i = 0; i < currentStartNodes.size(); i++){
-				((Graphics2D)g).draw(new Rectangle (currentStartNodes.get(i).getX(), currentStartNodes.get(i).getY(), SquareWidth, SquareWidth));
-			}
-
-			for (int i = 0; i < currentStartEdges.size(); i++){
-				((Graphics2D)g).draw(new Line2D.Double(currentStartEdges.get(i).getNode1().getX(), currentStartEdges.get(i).getNode1().getY(),currentStartEdges.get(i).getNode2().getX(),currentStartEdges.get(i).getNode2().getY() ));
-			}
+//			for (int i = 0; i < currentStartNodes.size(); i++){
+//				((Graphics2D)g).draw(new Rectangle (currentStartNodes.get(i).getX()-SquareWidth/2, currentStartNodes.get(i).getY()-SquareWidth/2, SquareWidth, SquareWidth));
+//			}
+//
+//			for (int i = 0; i < currentStartEdges.size(); i++){
+//				((Graphics2D)g).draw(new Line2D.Double(currentStartEdges.get(i).getNode1().getX(), currentStartEdges.get(i).getNode1().getY(),currentStartEdges.get(i).getNode2().getX(),currentStartEdges.get(i).getNode2().getY() ));
+//			}
+//			
 
 			Graphics2D g2d = (Graphics2D) g;
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 					RenderingHints.VALUE_ANTIALIAS_ON);
 			BasicStroke s = new BasicStroke(
-					5.5f, 
+					3f, 
 					BasicStroke.CAP_ROUND, 
 					BasicStroke.JOIN_ROUND);
 			g2d.setStroke(s);
@@ -457,13 +472,47 @@ public class EndUserGUI extends JPanel implements ActionListener{
 					path.lineTo(listPath.get(i).getX(),listPath.get(i).getY());
 					g2d.draw(path);
 				}
+				
 				g2d.draw(path);
-				g2d.setStroke(new BasicStroke(3));
-				g2d.setColor(Color.RED);
+				g2d.setStroke(new BasicStroke(2));
+				g2d.setColor(Color.BLUE);
 				g2d.draw(path);
+
+				g.setColor(Color.BLACK);
+				g.fillOval(startNode.getX()-(CircleDiam+3)/2, startNode.getY()-(CircleDiam+3)/2, CircleDiam+3, CircleDiam+3);
+				g.setColor(Color.GREEN);
+				g.fillOval(startNode.getX()-CircleDiam/2, startNode.getY()-CircleDiam/2, CircleDiam, CircleDiam);
+				
+				g.setColor(Color.BLACK);
+				g.fillOval(endNode.getX()-(CircleDiam+3)/2, endNode.getY()-(CircleDiam+3)/2, CircleDiam+3, CircleDiam+3);
+				g.setColor(Color.RED);
+				g.fillOval(endNode.getX()-CircleDiam/2, endNode.getY()-CircleDiam/2, CircleDiam, CircleDiam);
+				
 				repaint();
 				revalidate();
 			}
+			if (hovered != null){
+				g.setColor(Color.BLACK);
+				g.fillOval(hovered.getX()-(CircleDiam+3)/2, hovered.getY()-(CircleDiam+3)/2, CircleDiam+3, CircleDiam+3);
+				g.setColor(Color.GREEN);
+				g.fillOval(hovered.getX()-CircleDiam/2, hovered.getY()-CircleDiam/2, CircleDiam, CircleDiam);
+			}
+			if(startClicked){
+
+				g.setColor(Color.BLACK);
+				g.fillOval(startNode.getX()-(CircleDiam+3)/2, startNode.getY()-(CircleDiam+3)/2, CircleDiam+3, CircleDiam+3);
+				g.setColor(Color.GREEN);
+				g.fillOval(startNode.getX()-CircleDiam/2, startNode.getY()-CircleDiam/2, CircleDiam, CircleDiam);
+		
+			}
+			if(endClicked){
+
+				g.setColor(Color.BLACK);
+				g.fillOval(endNode.getX()-(CircleDiam+3)/2, endNode.getY()-(CircleDiam+3)/2, CircleDiam+3, CircleDiam+3);
+				g.setColor(Color.RED);
+				g.fillOval(endNode.getX()-CircleDiam/2, endNode.getY()-CircleDiam/2, CircleDiam, CircleDiam);
+			}
+
 		}
 
 		@Override
@@ -524,9 +573,9 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	                if (e.getValueIsAdjusting()) return;
 
 	                JList list = getPopupList();
-	                Node n = getNodeByName(String.valueOf(list.getSelectedValue()));
-	                if (n != null)
-	                System.out.println("--> " + n.getX() + "---" + n.getY());
+	                hovered = getNodeByName(String.valueOf(list.getSelectedValue()));
+	                if (hovered != null)
+	                System.out.println("--> " + hovered.getX() + "---" + hovered.getY());
 	            }
 
 				private Node getNodeByName(String name) {
