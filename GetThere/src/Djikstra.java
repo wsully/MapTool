@@ -156,6 +156,8 @@ public class Djikstra  {
 	
 	public String gpsInstructions (LinkedList<Node> path){
 		Node previous, current, next;
+		String result = "";
+		int counter = 0;
 		String direction;
 		if (path.size() == 0 || path == null){
 			return "No path";
@@ -167,7 +169,8 @@ public class Djikstra  {
 		else{
 			current = path.removeFirst();
 			next = path.removeFirst();
-			String result = "Walk " + current.getCost(next) + "\n";
+			counter +=1;
+			result += counter + ". " + "Walk " + current.getCost(next) + "\n";
 		while(path.size() > 0){
 			previous = current;
 			current = next;
@@ -177,34 +180,44 @@ public class Djikstra  {
 //			double c = Math.sqrt((Math.pow(current.getX() - previous.getX(),2)) + (Math.pow(current.getY() - previous.getY(),2)));
 //			int angle = (int) Math.toDegrees(Math.acos((b*b + c*c - a*a)/(2*b*c)));
 			int angle =  (int) Math.toDegrees((Math.atan2(next.getY()-current.getY(),next.getX()-current.getX()) -  Math.atan2(current.getY()-previous.getY(),current.getX()-previous.getX())));
-			result += "Angle = " + angle + " \n";
+			//result += "Angle = " + angle + " \n";
 			if(angle < -65 && angle >  -115){
-				result += "Take a right and ";
+				counter +=1;
+				result += counter + ". " +"Take a right and ";
 			}
 			else if(angle > 65 && angle <  115){
-				result += "Take a left and ";
+				counter +=1;
+				result += counter + ". " +"Take a left and ";
 			}
 			else if(angle < 65 && angle > 10){
-				result += "Take a slight left and ";
+				counter +=1;
+				result += counter + ". " +"Take a slight left and ";
 			}
 			else if(angle < -10 && angle > -65){
-				result += "Take a slight right and ";
+				counter +=1;
+				result += counter + ". " +"Take a slight right and ";
 			}
 			else if (angle == 180 || angle == -180){
-				result += "retrace your steps and contact whoever wrote this code, cause he screwed up, then ";
+				counter +=1;
+				result += counter + ". " +"retrace your steps and contact whoever wrote this code, cause he screwed up, then ";
 			}
 			else if(angle > 115){
-				result += "Take a hard left and ";
+				counter +=1;
+				result += counter + ". " +"Take a hard left and ";
 			}
 			else if(angle < -115){
-				result += "Take a hard right and ";
+				counter +=1;
+				result += counter + ". " +"Take a hard right and ";
 			}
 			else if(angle < 10 && angle > -10){
-				result += "Keep straight and ";
+				counter +=1;
+				result += counter + ". " +"Keep straight and ";
 			}
 			result += "walk " + current.getCost(next) + " \n";
 		}
-		result += "You have reached your destination \n";
+		counter +=1;
+		result += counter + ". " + "You have reached your destination \n";
+		
 		return result;
 		}
 	}
