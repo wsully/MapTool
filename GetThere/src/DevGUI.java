@@ -55,7 +55,9 @@ public class DevGUI extends JPanel{
 	private SelectMap loadMap;
 	static DevGUI window;
 	private BufferedImage currentMapFile;
-
+	private BufferedImage tempMapFile;
+	private NodeType currentType;
+	private Node currentNode;
 
 	String outputVar = "src/output.txt";
 	String inputVar = "src/output.txt";
@@ -65,6 +67,7 @@ public class DevGUI extends JPanel{
 	boolean createEdges = false;
 	boolean importPushed = true;
 	boolean updateMap = false;
+	boolean createMapLink = false;
 	int indexOfCurrentMap;
 	private LinkedList<String> currentMapList;
 
@@ -198,9 +201,10 @@ public class DevGUI extends JPanel{
 		});
 
 		for (int i = 0; i < maps.size(); i++) {
-			if(maps.get(i).getMapName() != null)
+			if(maps.get(i).getMapName() != null){
 				startBuildingSEL.addItem(maps.get(i).getMapName());
 				currentMapList.add(maps.get(i).getMapName());
+			}
 		}
 
 		//Add Combo Boxes to UIPanel
@@ -229,6 +233,8 @@ public class DevGUI extends JPanel{
 					createNodes = true;
 					createSpecial = false;
 					createEdges = false;
+					createMapLink = false;
+
 				}
 			});
 
@@ -241,12 +247,27 @@ public class DevGUI extends JPanel{
 					createNodes = false;
 					createSpecial = true;
 					createEdges = false;
+					createMapLink = false;
+
+				}
+			});
+			
+			JButton btnCreateMapLink = new JButton("Map link");
+			btnCreateMapLink.setBounds(762, 196, 132, 29);
+			uiPanel.add(btnCreateMapLink);
+			btnCreateMapLink.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e){
+					System.out.println("Create Special Nodes Pushed.");
+					createNodes = false;
+					createSpecial = false;
+					createEdges = false;
+					createMapLink = true;
 				}
 			});
 
 			//Construct button and add action listener
 			JButton btnMakeNeighbors = new JButton("Make Neighbors");
-			btnMakeNeighbors.setBounds(762, 196, 132, 29);
+			btnMakeNeighbors.setBounds(762, 226, 132, 29);
 			uiPanel.add(btnMakeNeighbors);
 			btnMakeNeighbors.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e){
@@ -254,12 +275,13 @@ public class DevGUI extends JPanel{
 					createNodes = false;
 					createSpecial = false;
 					createEdges = true;
+					createMapLink = false;
 				}
 			});
 
 			//Construct button and add action listener
 			JButton btnExport = new JButton("Save Changes");
-			btnExport.setBounds(762, 226, 132, 29);
+			btnExport.setBounds(762, 256, 132, 29);
 			uiPanel.add(btnExport);
 			btnExport.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e){
@@ -288,8 +310,7 @@ public class DevGUI extends JPanel{
 
 
 			JButton btnDeleteMap = new JButton("Delete Map");
-			btnDeleteMap.setName ("deletemap");
-			btnDeleteMap.setBounds(762, 286, 132, 29);
+			btnDeleteMap.setBounds(762, 316, 132, 29);
 			uiPanel.add(btnDeleteMap);
 			btnDeleteMap.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e){
@@ -348,17 +369,21 @@ public class DevGUI extends JPanel{
 
 
 					if(createNodes){
-						if (nodeIndex < 0) // not inside a square
-							currentStartNodes.add(new Node(x, y));
+						if (nodeIndex < 0){ // not inside a square
+							Node newNode = new Node(x, y);
+							newNode.setName(currentMapName + "."+ newNode.getName());
+							currentStartNodes.add(newNode);
+							
+						}
 					}
 					if(createSpecial){
 						if (nodeIndex < 0){ // not inside a square
-							String nodeName = JOptionPane.showInputDialog("Enter Node Name:");
+							String nodeName = currentMapName +"."+ JOptionPane.showInputDialog("Enter Node Name:");
 							if(nodeName == null || (nodeName != null && ("".equals(nodeName)))){
 								return;
 							} else {
 								String[] types = {"No Type", "Bathroom", "Blue Tower", "Elevator", 
-										"Stairs Up", "Stairs Down", "Food", "Emergency Exit"};
+										"Stairs", "Food", "Emergency Exit", "Lecture Hall", "Office"};
 								Object selectedValue = JOptionPane.showInputDialog(null,
 										"Choose a Node Type", "Input",
 										JOptionPane.INFORMATION_MESSAGE, null,
@@ -374,13 +399,35 @@ public class DevGUI extends JPanel{
 									currentStartNodes.add(new Node(x, y, nodeName, NodeType.BLUETOWER));
 									break;
 								case "Elevator":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.ELEVATOR));
+									int i;
+									currentType = NodeType.ELEVATOR;
+									String[] mapNames = new String[currentMapList.size()];
+									for(i = 0; i < mapNames.length; i++){
+										mapNames[i] = currentMapList.get(i);
+									}
+									Object selectedMap = JOptionPane.showInputDialog(null, 
+															"Choose a map to connect to",
+															"Input",
+															JOptionPane.INFORMATION_MESSAGE, null,
+															mapNames, mapNames[1]);
+									String tempMapName = (String) selectedMap;	
+									for (i = 0; i <maps.size(); i++){
+										if(tempMapName.equals(maps.get(i).getMapName())){
+											tempMapFile = maps.get(i).getImage();
+											break;
+										}
+									}
+									Node linkNode = new Node(x, y, nodeName, NodeType.ELEVATOR);
+									currentNode = linkNode;
+									currentStartNodes.add(linkNode);
+									createMapLink = true;
+									currentMapName = tempMapName;
+									currentStartNodes = maps.get(i).getNodes();
+									currentStartEdges = maps.get(i).getEdges();
+									currentMapFile = maps.get(i).getImage();
 									break;
-								case "Stairs Up":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.STAIRSUP));
-									break;
-								case "Stairs Down":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.STAIRSDOWN));
+								case "Stairs":
+									currentStartNodes.add(new Node(x, y, nodeName, NodeType.STAIRS));
 									break;
 								case "Food":
 									currentStartNodes.add(new Node(x, y, nodeName, NodeType.FOOD));
@@ -388,13 +435,32 @@ public class DevGUI extends JPanel{
 								case "Emergency Exit":
 									currentStartNodes.add(new Node(x, y, nodeName, NodeType.EMERGEXIT));
 									break;
+								case "Lecture Hall":
+									currentStartNodes.add(new Node(x, y, nodeName, NodeType.LECTUREHALL));
+									break;
+								case "Office":
+									currentStartNodes.add(new Node(x, y, nodeName, NodeType.OFFICE));
+									break;
+								case "Door":
+									currentStartNodes.add(new Node(x, y, nodeName, NodeType.DOOR));
+									break;
 								default:
 									currentStartNodes.add(new Node(x, y, nodeName, NodeType.NOTYPE));
 								}
 							}
 						}
 					}
-
+					if(createMapLink){
+						if (nodeIndex < 0){ // not inside a square
+							Node newNode = new Node(x, y);
+							newNode.setType(currentType);
+							newNode.setName(currentMapName + "."+ newNode.getName());
+							currentStartNodes.add(newNode);
+							Edge newEdge = new Edge(currentNode, newNode, 0);
+							currentStartEdges.add(newEdge);
+							createMapLink = false;
+						}
+					}
 					if(createEdges){
 
 						if(count == 0 && nodeIndex >= 0){
@@ -409,7 +475,6 @@ public class DevGUI extends JPanel{
 							count = 0;
 						}
 					}
-
 					if (evt.getClickCount() >= 2 && (createNodes || createSpecial)) {
 
 						LinkedList<Edge> tempList = new LinkedList<Edge>();
@@ -434,6 +499,10 @@ public class DevGUI extends JPanel{
 			super.paintComponent(g);
 
 			g.drawImage(currentMapFile, 0, 0, this);
+			if(createMapLink){
+				g.drawImage(tempMapFile, 0, 0, this);
+				
+			}
 			repaint();
 			revalidate();
 
@@ -448,7 +517,7 @@ public class DevGUI extends JPanel{
 			g2d.setColor(Color.BLACK);
 
 			for (int i = 0; i < currentStartNodes.size(); i++){
-				((Graphics2D)g).draw(new Rectangle (currentStartNodes.get(i).getX(), currentStartNodes.get(i).getY(), SquareWidth, SquareWidth));
+				((Graphics2D)g).draw(new Rectangle (currentStartNodes.get(i).getX()-SquareWidth/2, currentStartNodes.get(i).getY()-SquareWidth/2, SquareWidth, SquareWidth));
 			}
 
 			for (int i = 0; i < currentStartEdges.size(); i++){
@@ -524,10 +593,21 @@ public class DevGUI extends JPanel{
 			int x = evt.getX();
 			int y = evt.getY();
 
-			if (getNodeIndex(x, y) >= 0)
+			if (getNodeIndex(x, y) >= 0){
 				setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-			else
+				String fullName = currentStartNodes.get(getNodeIndex(x, y)).getName();
+				int a = fullName.indexOf(".") ;
+				if(a != -1){
+					fullName = fullName.substring(a+1, fullName.length()-1);
+				}
+
+				setToolTipText("Node: " + getNodeIndex(x, y) 
+				+ " Name: " + fullName);
+				show();
+			}
+			else{
 				setCursor(Cursor.getDefaultCursor());
+			}
 		}
 
 		public void mouseDragged(MouseEvent evt) {
