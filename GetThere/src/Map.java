@@ -74,6 +74,7 @@ public class Map implements Serializable{
 	}
 	
 	public void addNode(Node node){
+//		node.setName(mapName + "." + node.getName());
 		this.nodes.add(node);
 	}
 	
