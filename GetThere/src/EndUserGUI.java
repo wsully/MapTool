@@ -63,6 +63,8 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	
 	private boolean startClicked = false;
 	private boolean endClicked = false;
+	private boolean startHoverFlag = false;
+	private boolean endHoverFlag = false;
 	
 
 	private JTextArea directions;
@@ -234,14 +236,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		startRoomSEL.setBounds(893, 50, 132, 29);
 		startRoomSEL.setEditable(false);
 		startRoomSEL.setVisible(true);
-		startRoomSEL.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				if(hovered != null){
-					startNode = hovered;
-					startClicked = true;
-				}
-			}
-		});
+		
 		//Construct Combo boxes to select start point
 		startBuildingSEL = new JComboBox<String>();
 		startBuildingSEL.setBounds(755, 50, 132, 29);
@@ -271,6 +266,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 					if(startRooms[i] != "")
 						startRoomSEL.addItem(startRooms[i]);
 				}
+				startHoverFlag = false;
 				uiPanel.repaint();
 		        frame.repaint();
 			}
@@ -285,14 +281,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		endRoomSEL.setBounds(893, 116, 132, 29);
 		endRoomSEL.setEditable(false);
 		endRoomSEL.setVisible(true);
-		endRoomSEL.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				if(hovered != null){
-					endNode = hovered;
-					endClicked = true;
-				}
-			}
-		});
+		
 		
 		//Construct Combo boxes to select end point
 		endBuildingSEL = new JComboBox<String>();
@@ -318,6 +307,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 					if(endRooms[i] != "")
 						endRoomSEL.addItem(endRooms[i]);
 				}
+				endHoverFlag = false;
 				uiPanel.repaint();
 		        frame.repaint();
 			}
@@ -618,6 +608,14 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	                System.out.println(getPopupName());
 	                System.out.println(startRoomSEL.getY());
 	                System.out.println(endRoomSEL.getY());
+	                if(!startHoverFlag){
+	                	startHoverFlag = true;
+	                	return;
+	                	}
+	                if(!endHoverFlag){
+	                	endHoverFlag = true;
+	                	return;
+	                }
 	                if(getPopupName() == 1793329556){
 	                	startClicked = true;
 	                	startNode = hovered;
