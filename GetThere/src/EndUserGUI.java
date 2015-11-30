@@ -236,6 +236,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		startRoomSEL.setBounds(893, 50, 132, 29);
 		startRoomSEL.setEditable(false);
 		startRoomSEL.setVisible(true);
+		startRoomSEL.setName("Start");
 		
 		//Construct Combo boxes to select start point
 		startBuildingSEL = new JComboBox<String>();
@@ -281,6 +282,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		endRoomSEL.setBounds(893, 116, 132, 29);
 		endRoomSEL.setEditable(false);
 		endRoomSEL.setVisible(true);
+		endRoomSEL.setName("End");
 		
 		
 		//Construct Combo boxes to select end point
@@ -606,8 +608,8 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	                if (hovered != null){
 	                //System.out.println("--> " + hovered.getX() + "---" + hovered.getY());
 	                System.out.println(getPopupName());
-	                System.out.println(startRoomSEL.getY());
-	                System.out.println(endRoomSEL.getY());
+
+
 	                if(!startHoverFlag){
 	                	startHoverFlag = true;
 	                	return;
@@ -616,12 +618,12 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	                	endHoverFlag = true;
 	                	return;
 	                }
-	                if(getPopupName() == 1793329556){
+	                if(getPopupName().equals("Start")){
 	                	startClicked = true;
 	                	startNode = hovered;
 	                	System.out.println("START SELECTED");
 	                }
-	                else if(getPopupName() == 1031980531){
+	                else if(getPopupName().equals("End")){
 	                	endClicked = true;
 	                	endNode = hovered;
 	                	System.out.println("END SELECTED");
@@ -648,9 +650,9 @@ public class EndUserGUI extends JPanel implements ActionListener{
 
 	    }
 	    
-	    private int getPopupName() {
-	    	 ComboPopup popup = (ComboPopup) getUI().getAccessibleChild(this, 0);
-	       return popup.hashCode();
+	    private String getPopupName() {
+	    	 JComboBox jcb = (JComboBox) getUI().getAccessibleChild(this, 0).getAccessibleContext().getAccessibleParent();
+	       return jcb.getName();
 	        
 
 	    }
