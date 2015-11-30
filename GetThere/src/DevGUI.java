@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.FileOutputStream;
+import java.io.File;
 
 import java.awt.image.BufferedImage;
 
@@ -92,8 +93,14 @@ public class DevGUI extends JPanel{
 
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
+		
+		if(new File("MapList.ser").canRead()){
+			maps.addAll((LinkedList<Map>) deserialize("MapList"));}
+			
+		if(new File("MapList1.ser").canRead()){
+			maps.addAll((LinkedList<Map>) deserialize("MapList1"));}
 
-		maps = (LinkedList<Map>) deserialize("MapList");
+		
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -503,25 +510,40 @@ public class DevGUI extends JPanel{
 				g.drawImage(tempMapFile, 0, 0, this);
 				
 			}
-			repaint();
-			revalidate();
+	
 
-			Graphics2D g2d = (Graphics2D) g;
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-					RenderingHints.VALUE_ANTIALIAS_ON);
-			BasicStroke s = new BasicStroke(
-					1.5f, 
-					BasicStroke.CAP_ROUND, 
-					BasicStroke.JOIN_ROUND);
-			g2d.setStroke(s);
-			g2d.setColor(Color.BLACK);
+			
 
 			for (int i = 0; i < currentStartNodes.size(); i++){
-				((Graphics2D)g).draw(new Rectangle (currentStartNodes.get(i).getX()-SquareWidth/2, 
+				
+				
+				if(currentStartNodes.get(i).getType() == null)
+				currentStartNodes.get(i).setType(NodeType.NOTYPE);
+				
+				
+				switch ((NodeType)currentStartNodes.get(i).getType()){
+					case NOTYPE:
+						g.setColor(Color.BLACK);
+						break;
+					case BATHROOM:
+						g.setColor(Color.YELLOW);
+						break;
+					case ELEVATOR:
+						g.setColor(Color.GREEN);
+						break;
+					case STAIRS:
+						g.setColor(Color.ORANGE);
+						break;
+					
+					}
+				
+				
+				((Graphics2D)g).fill(new Rectangle (currentStartNodes.get(i).getX()-SquareWidth/2, 
 													currentStartNodes.get(i).getY()-SquareWidth/2,
 													SquareWidth, SquareWidth));
 			}
-
+			
+			g.setColor(Color.BLACK);
 			for (int i = 0; i < currentStartEdges.size(); i++){
 				((Graphics2D)g).draw(new Line2D.Double(currentStartEdges.get(i).getNode1().getX(), 
 														currentStartEdges.get(i).getNode1().getY(),
@@ -595,6 +617,9 @@ public class DevGUI extends JPanel{
 
 
 		public void mouseMoved(MouseEvent evt) {
+			repaint();
+			revalidate();
+			
 			int x = evt.getX();
 			int y = evt.getY();
 
@@ -616,6 +641,9 @@ public class DevGUI extends JPanel{
 		}
 
 		public void mouseDragged(MouseEvent evt) {
+			repaint();
+			revalidate();
+			
 			int x = evt.getX();
 			int y = evt.getY();
 
