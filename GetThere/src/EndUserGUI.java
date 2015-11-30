@@ -616,13 +616,14 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	                if (hovered != null){
 	                //System.out.println("--> " + hovered.getX() + "---" + hovered.getY());
 	                System.out.println(getPopupName());
-	                
-	                if(getPopupName() == 476402209){
+	                System.out.println(startRoomSEL.getY());
+	                System.out.println(endRoomSEL.getY());
+	                if(getPopupName() == 1793329556){
 	                	startClicked = true;
 	                	startNode = hovered;
 	                	System.out.println("START SELECTED");
 	                }
-	                else if(getPopupName() == 1919892312){
+	                else if(getPopupName() == 1031980531){
 	                	endClicked = true;
 	                	endNode = hovered;
 	                	System.out.println("END SELECTED");
@@ -644,12 +645,14 @@ public class EndUserGUI extends JPanel implements ActionListener{
 
 	    private JList getPopupList() {
 	        ComboPopup popup = (ComboPopup) getUI().getAccessibleChild(this, 0);
+	        System.out.println("-->>>" + popup.hashCode());
 	        return popup.getList();
 
 	    }
 	    
 	    private int getPopupName() {
-	       return getUI().getAccessibleChild(this, 0).getAccessibleContext().hashCode();
+	    	 ComboPopup popup = (ComboPopup) getUI().getAccessibleChild(this, 0);
+	       return popup.hashCode();
 	        
 
 	    }
