@@ -70,7 +70,9 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	private JFrame frame;		//Creates the main frame for the GUI
 	private JPanel uiPanel;		//Panel to hold the interface buttons
 	private JPanel mapPanel;	//Panel to hold the map
-	private Image mapImage;		//Represents the map to be chosen
+	private Image mapImage;		
+	
+	//Represents the map to be chosen
 	//private Image pathImage;	//Image that draws the path on the map
 
 	//Labels on the GUI
@@ -85,8 +87,10 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	//Combo Boxes on the GUI
 	private JComboBox<String> startBuildingSEL;
 	private XComboBox startRoomSEL = new XComboBox();
+	private boolean startRoomSELLaunched = false;
 	private JComboBox<String> endBuildingSEL;
 	private XComboBox endRoomSEL = new XComboBox();
+	private boolean endRoomSELLaunched = false;
 	//private JComboBox startFloorSEL;
 
 	//Buttons on the UI
@@ -230,7 +234,14 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		startRoomSEL.setBounds(893, 50, 132, 29);
 		startRoomSEL.setEditable(false);
 		startRoomSEL.setVisible(true);
-
+		startRoomSEL.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				if(hovered != null){
+					startNode = hovered;
+					startClicked = true;
+				}
+			}
+		});
 		//Construct Combo boxes to select start point
 		startBuildingSEL = new JComboBox<String>();
 		startBuildingSEL.setBounds(755, 50, 132, 29);
@@ -238,6 +249,8 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		startBuildingSEL.setVisible(true);
 		startBuildingSEL.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
+				startRoomSELLaunched = false;
+				endRoomSELLaunched = false;
 				repaint();
 				revalidate();
 				int indexOfCurrentMap;
@@ -272,7 +285,15 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		endRoomSEL.setBounds(893, 116, 132, 29);
 		endRoomSEL.setEditable(false);
 		endRoomSEL.setVisible(true);
-
+		endRoomSEL.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				if(hovered != null){
+					endNode = hovered;
+					endClicked = true;
+				}
+			}
+		});
+		
 		//Construct Combo boxes to select end point
 		endBuildingSEL = new JComboBox<String>();
 		endBuildingSEL.setBounds(755, 116, 132, 29);
@@ -492,10 +513,24 @@ public class EndUserGUI extends JPanel implements ActionListener{
 				revalidate();
 			}
 			if (hovered != null){
-				g.setColor(Color.BLACK);
-				g.fillOval(hovered.getX()-(CircleDiam+3)/2, hovered.getY()-(CircleDiam+3)/2, CircleDiam+3, CircleDiam+3);
-				g.setColor(Color.GREEN);
-				g.fillOval(hovered.getX()-CircleDiam/2, hovered.getY()-CircleDiam/2, CircleDiam, CircleDiam);
+				if(startNode != null){
+					
+					g.setColor(Color.BLACK);
+					g.fillOval(startNode.getX()-(CircleDiam+3)/2, startNode.getY()-(CircleDiam+3)/2, CircleDiam+3, CircleDiam+3);
+					g.setColor(Color.GREEN);
+					g.fillOval(startNode.getX()-CircleDiam/2, startNode.getY()-CircleDiam/2, CircleDiam, CircleDiam);
+			
+				}
+				if(endNode != null){
+					g.setColor(Color.BLACK);
+					g.fillOval(startNode.getX()-(CircleDiam+3)/2, startNode.getY()-(CircleDiam+3)/2, CircleDiam+3, CircleDiam+3);
+					g.setColor(Color.GREEN);
+					g.fillOval(startNode.getX()-CircleDiam/2, startNode.getY()-CircleDiam/2, CircleDiam, CircleDiam);
+					g.setColor(Color.BLACK);
+					g.fillOval(endNode.getX()-(CircleDiam+3)/2, endNode.getY()-(CircleDiam+3)/2, CircleDiam+3, CircleDiam+3);
+					g.setColor(Color.RED);
+					g.fillOval(endNode.getX()-CircleDiam/2, endNode.getY()-CircleDiam/2, CircleDiam, CircleDiam);
+				}
 			}
 			if(startClicked){
 
@@ -506,7 +541,10 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		
 			}
 			if(endClicked){
-
+				g.setColor(Color.BLACK);
+				g.fillOval(startNode.getX()-(CircleDiam+3)/2, startNode.getY()-(CircleDiam+3)/2, CircleDiam+3, CircleDiam+3);
+				g.setColor(Color.GREEN);
+				g.fillOval(startNode.getX()-CircleDiam/2, startNode.getY()-CircleDiam/2, CircleDiam, CircleDiam);
 				g.setColor(Color.BLACK);
 				g.fillOval(endNode.getX()-(CircleDiam+3)/2, endNode.getY()-(CircleDiam+3)/2, CircleDiam+3, CircleDiam+3);
 				g.setColor(Color.RED);
@@ -570,12 +608,26 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	        listener = new ListSelectionListener() {
 	            @Override
 	            public void valueChanged(ListSelectionEvent e) {
+	            	
 	                if (e.getValueIsAdjusting()) return;
-
+	                
 	                JList list = getPopupList();
 	                hovered = getNodeByName(String.valueOf(list.getSelectedValue()));
-	                if (hovered != null)
-	                System.out.println("--> " + hovered.getX() + "---" + hovered.getY());
+	                if (hovered != null){
+	                //System.out.println("--> " + hovered.getX() + "---" + hovered.getY());
+	                System.out.println(getPopupName());
+	                
+	                if(getPopupName() == 476402209){
+	                	startClicked = true;
+	                	startNode = hovered;
+	                	System.out.println("START SELECTED");
+	                }
+	                else if(getPopupName() == 1919892312){
+	                	endClicked = true;
+	                	endNode = hovered;
+	                	System.out.println("END SELECTED");
+	                }
+	                }
 	            }
 
 				private Node getNodeByName(String name) {
@@ -593,6 +645,12 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	    private JList getPopupList() {
 	        ComboPopup popup = (ComboPopup) getUI().getAccessibleChild(this, 0);
 	        return popup.getList();
+
+	    }
+	    
+	    private int getPopupName() {
+	       return getUI().getAccessibleChild(this, 0).getAccessibleContext().hashCode();
+	        
 
 	    }
 	}
