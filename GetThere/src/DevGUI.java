@@ -399,41 +399,16 @@ public class DevGUI extends JPanel{
 									currentStartNodes.add(new Node(x, y, nodeName, NodeType.BLUETOWER));
 									break;
 								case "Elevator":
-									int i;
-									currentType = NodeType.ELEVATOR;
-									String[] mapNames = new String[currentMapList.size()];
-									for(i = 0; i < mapNames.length; i++){
-										mapNames[i] = currentMapList.get(i);
-									}
-									Object selectedMap = JOptionPane.showInputDialog(null, 
-															"Choose a map to connect to",
-															"Input",
-															JOptionPane.INFORMATION_MESSAGE, null,
-															mapNames, mapNames[1]);
-									String tempMapName = (String) selectedMap;	
-									for (i = 0; i <maps.size(); i++){
-										if(tempMapName.equals(maps.get(i).getMapName())){
-											tempMapFile = maps.get(i).getImage();
-											break;
-										}
-									}
-									Node linkNode = new Node(x, y, nodeName, NodeType.ELEVATOR);
-									currentNode = linkNode;
-									currentStartNodes.add(linkNode);
-									createMapLink = true;
-									currentMapName = tempMapName;
-									currentStartNodes = maps.get(i).getNodes();
-									currentStartEdges = maps.get(i).getEdges();
-									currentMapFile = maps.get(i).getImage();
+									makeLink(x, y, nodeName, NodeType.ELEVATOR);
 									break;
 								case "Stairs":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.STAIRS));
+									makeLink(x, y, nodeName, NodeType.STAIRS);
 									break;
 								case "Food":
 									currentStartNodes.add(new Node(x, y, nodeName, NodeType.FOOD));
 									break;
 								case "Emergency Exit":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.EMERGEXIT));
+									makeLink(x, y, nodeName, NodeType.EMERGEXIT);
 									break;
 								case "Lecture Hall":
 									currentStartNodes.add(new Node(x, y, nodeName, NodeType.LECTUREHALL));
@@ -442,7 +417,7 @@ public class DevGUI extends JPanel{
 									currentStartNodes.add(new Node(x, y, nodeName, NodeType.OFFICE));
 									break;
 								case "Door":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.DOOR));
+									makeLink(x, y, nodeName, NodeType.DOOR);
 									break;
 								default:
 									currentStartNodes.add(new Node(x, y, nodeName, NodeType.NOTYPE));
@@ -458,6 +433,14 @@ public class DevGUI extends JPanel{
 							currentStartNodes.add(newNode);
 							Edge newEdge = new Edge(currentNode, newNode, 0);
 							currentStartEdges.add(newEdge);
+							for(int k = 0; k < maps.size(); k++){
+								for(int j = 0; j < maps.get(k).getNodes().size(); j++){
+									if(maps.get(k).getNodes().get(j).equals(currentNode)){
+										maps.get(k).getEdges().add(newEdge);
+										break;
+									}
+								}
+							}
 							createMapLink = false;
 						}
 					}
@@ -494,6 +477,35 @@ public class DevGUI extends JPanel{
 			addMouseMotionListener(this);
 
 		}
+		
+		public void makeLink(int x, int y, String nodeName, NodeType type){
+			int i;
+			currentType = type;
+			String[] mapNames = new String[currentMapList.size()];
+			for(i = 0; i < mapNames.length; i++){
+				mapNames[i] = currentMapList.get(i);
+			}
+			Object selectedMap = JOptionPane.showInputDialog(null, 
+									"Choose a map to connect to",
+									"Input",
+									JOptionPane.INFORMATION_MESSAGE, null,
+									mapNames, mapNames[1]);
+			String tempMapName = (String) selectedMap;	
+			for (i = 0; i <maps.size(); i++){
+				if(tempMapName.equals(maps.get(i).getMapName())){
+					tempMapFile = maps.get(i).getImage();
+					break;
+				}
+			}
+			Node linkNode = new Node(x, y, nodeName, type);
+			currentNode = linkNode;
+			currentStartNodes.add(linkNode);
+			createMapLink = true;
+			currentMapName = tempMapName;
+			currentStartNodes = maps.get(i).getNodes();
+			currentStartEdges = maps.get(i).getEdges();
+			currentMapFile = maps.get(i).getImage();
+		}
 		@Override
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
@@ -517,11 +529,16 @@ public class DevGUI extends JPanel{
 			g2d.setColor(Color.BLACK);
 
 			for (int i = 0; i < currentStartNodes.size(); i++){
-				((Graphics2D)g).draw(new Rectangle (currentStartNodes.get(i).getX()-SquareWidth/2, currentStartNodes.get(i).getY()-SquareWidth/2, SquareWidth, SquareWidth));
+				((Graphics2D)g).draw(new Rectangle (currentStartNodes.get(i).getX()-SquareWidth/2, 
+													currentStartNodes.get(i).getY()-SquareWidth/2,
+													SquareWidth, SquareWidth));
 			}
 
 			for (int i = 0; i < currentStartEdges.size(); i++){
-				((Graphics2D)g).draw(new Line2D.Double(currentStartEdges.get(i).getNode1().getX(), currentStartEdges.get(i).getNode1().getY(),currentStartEdges.get(i).getNode2().getX(),currentStartEdges.get(i).getNode2().getY() ));
+				((Graphics2D)g).draw(new Line2D.Double(currentStartEdges.get(i).getNode1().getX(), 
+														currentStartEdges.get(i).getNode1().getY(),
+														currentStartEdges.get(i).getNode2().getX(),
+														currentStartEdges.get(i).getNode2().getY() ));
 			}
 		}
 
