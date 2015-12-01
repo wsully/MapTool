@@ -22,8 +22,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 import java.util.*;
 import java.io.FileInputStream;
@@ -100,7 +98,6 @@ public class DevGUI extends JPanel{
 		if(new File("MapList1.ser").canRead()){
 			maps.addAll((LinkedList<Map>) deserialize("MapList1"));}
 
-		
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -259,22 +256,10 @@ public class DevGUI extends JPanel{
 				}
 			});
 			
-			JButton btnCreateMapLink = new JButton("Map link");
-			btnCreateMapLink.setBounds(762, 196, 132, 29);
-			uiPanel.add(btnCreateMapLink);
-			btnCreateMapLink.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e){
-					System.out.println("Create Special Nodes Pushed.");
-					createNodes = false;
-					createSpecial = false;
-					createEdges = false;
-					createMapLink = true;
-				}
-			});
 
 			//Construct button and add action listener
 			JButton btnMakeNeighbors = new JButton("Make Neighbors");
-			btnMakeNeighbors.setBounds(762, 226, 132, 29);
+			btnMakeNeighbors.setBounds(762, 196, 132, 29);
 			uiPanel.add(btnMakeNeighbors);
 			btnMakeNeighbors.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e){
@@ -288,7 +273,7 @@ public class DevGUI extends JPanel{
 
 			//Construct button and add action listener
 			JButton btnExport = new JButton("Save Changes");
-			btnExport.setBounds(762, 256, 132, 29);
+			btnExport.setBounds(762, 226, 132, 29);
 			uiPanel.add(btnExport);
 			btnExport.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e){
@@ -317,7 +302,7 @@ public class DevGUI extends JPanel{
 
 
 			JButton btnDeleteMap = new JButton("Delete Map");
-			btnDeleteMap.setBounds(762, 316, 132, 29);
+			btnDeleteMap.setBounds(762, 286, 132, 29);
 			uiPanel.add(btnDeleteMap);
 			btnDeleteMap.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e){
@@ -395,64 +380,41 @@ public class DevGUI extends JPanel{
 										"Choose a Node Type", "Input",
 										JOptionPane.INFORMATION_MESSAGE, null,
 										types, types[0]);
-								switch((String)selectedValue){
-								case "No Type":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.NOTYPE));
-									break;
-								case "Bathroom":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.BATHROOM));
-									break;
-								case "Blue Tower":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.BLUETOWER));
-									break;
-								case "Elevator":
-									int i;
-									currentType = NodeType.ELEVATOR;
-									String[] mapNames = new String[currentMapList.size()];
-									for(i = 0; i < mapNames.length; i++){
-										mapNames[i] = currentMapList.get(i);
+								if(selectedValue != null){
+									switch((String)selectedValue){
+									case "No Type":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.NOTYPE));
+										break;
+									case "Bathroom":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.BATHROOM));
+										break;
+									case "Blue Tower":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.BLUETOWER));
+										break;
+									case "Elevator":
+										makeLink(x, y, nodeName, NodeType.ELEVATOR);
+										break;
+									case "Stairs":
+										makeLink(x, y, nodeName, NodeType.STAIRS);
+										break;
+									case "Food":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.FOOD));
+										break;
+									case "Emergency Exit":
+										makeLink(x, y, nodeName, NodeType.EMERGEXIT);
+										break;
+									case "Lecture Hall":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.LECTUREHALL));
+										break;
+									case "Office":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.OFFICE));
+										break;
+									case "Door":
+										makeLink(x, y, nodeName, NodeType.DOOR);
+										break;
+									default:
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.NOTYPE));
 									}
-									Object selectedMap = JOptionPane.showInputDialog(null, 
-															"Choose a map to connect to",
-															"Input",
-															JOptionPane.INFORMATION_MESSAGE, null,
-															mapNames, mapNames[1]);
-									String tempMapName = (String) selectedMap;	
-									for (i = 0; i <maps.size(); i++){
-										if(tempMapName.equals(maps.get(i).getMapName())){
-											tempMapFile = maps.get(i).getImage();
-											break;
-										}
-									}
-									Node linkNode = new Node(x, y, nodeName, NodeType.ELEVATOR);
-									currentNode = linkNode;
-									currentStartNodes.add(linkNode);
-									createMapLink = true;
-									currentMapName = tempMapName;
-									currentStartNodes = maps.get(i).getNodes();
-									currentStartEdges = maps.get(i).getEdges();
-									currentMapFile = maps.get(i).getImage();
-									break;
-								case "Stairs":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.STAIRS));
-									break;
-								case "Food":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.FOOD));
-									break;
-								case "Emergency Exit":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.EMERGEXIT));
-									break;
-								case "Lecture Hall":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.LECTUREHALL));
-									break;
-								case "Office":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.OFFICE));
-									break;
-								case "Door":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.DOOR));
-									break;
-								default:
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.NOTYPE));
 								}
 							}
 						}
@@ -465,6 +427,14 @@ public class DevGUI extends JPanel{
 							currentStartNodes.add(newNode);
 							Edge newEdge = new Edge(currentNode, newNode, 0);
 							currentStartEdges.add(newEdge);
+							for(int k = 0; k < maps.size(); k++){
+								for(int j = 0; j < maps.get(k).getNodes().size(); j++){
+									if(maps.get(k).getNodes().get(j).equals(currentNode)){
+										maps.get(k).getEdges().add(newEdge);
+										break;
+									}
+								}
+							}
 							createMapLink = false;
 						}
 					}
@@ -500,6 +470,35 @@ public class DevGUI extends JPanel{
 			});
 			addMouseMotionListener(this);
 
+		}
+		
+		public void makeLink(int x, int y, String nodeName, NodeType type){
+			int i;
+			currentType = type;
+			String[] mapNames = new String[currentMapList.size()];
+			for(i = 0; i < mapNames.length; i++){
+				mapNames[i] = currentMapList.get(i);
+			}
+			Object selectedMap = JOptionPane.showInputDialog(null, 
+									"Choose a map to connect to",
+									"Input",
+									JOptionPane.INFORMATION_MESSAGE, null,
+									mapNames, mapNames[1]);
+			String tempMapName = (String) selectedMap;	
+			for (i = 0; i <maps.size(); i++){
+				if(tempMapName.equals(maps.get(i).getMapName())){
+					tempMapFile = maps.get(i).getImage();
+					break;
+				}
+			}
+			Node linkNode = new Node(x, y, nodeName, type);
+			currentNode = linkNode;
+			currentStartNodes.add(linkNode);
+			createMapLink = true;
+			currentMapName = tempMapName;
+			currentStartNodes = maps.get(i).getNodes();
+			currentStartEdges = maps.get(i).getEdges();
+			currentMapFile = maps.get(i).getImage();
 		}
 		@Override
 		public void paintComponent(Graphics g) {
