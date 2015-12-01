@@ -248,7 +248,6 @@ public class DevGUI extends JPanel{
 					createSpecial = true;
 					createEdges = false;
 					createMapLink = false;
-
 				}
 			});
 			
