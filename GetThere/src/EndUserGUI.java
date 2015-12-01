@@ -448,11 +448,17 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		});
 
 		historyIcon = new ImageIcon("IconImages/historyIcon.png");
+		ImageIcon historyIconBIG = new ImageIcon("IconImages/historyIconBIG.png");
 		history = new JButton();
 		history.setToolTipText("...Coming Soon");
 		history.setIcon(historyIcon);
 		history.setBounds(940, 632, 40, 40);
 		uiPanel.add(history);
+		history.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				JOptionPane.showMessageDialog(null, "....Coming Soon", "...Coming Soon", JOptionPane.PLAIN_MESSAGE, historyIconBIG);
+			}
+		});
 
 		//Construct buttons and add action listener
 		searchButton.addActionListener(new ActionListener() {
