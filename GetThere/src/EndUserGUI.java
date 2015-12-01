@@ -7,7 +7,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,7 +14,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,6 +24,7 @@ import java.util.LinkedList;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -33,6 +32,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -77,7 +77,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	private JFrame frame;		//Creates the main frame for the GUI
 	private JPanel uiPanel;		//Panel to hold the interface buttons
 	private JPanel mapPanel;	//Panel to hold the map
-	private Image mapImage;		
+	//private Image mapImage;		
 
 	//Represents the map to be chosen
 	//private Image pathImage;	//Image that draws the path on the map
@@ -123,6 +123,14 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	private int arrowCounter = 0;
 	private int floor = -1;
 
+	private JButton emergency;
+	private Icon emergencyIcon;
+	private JButton email;
+	private Icon emailIcon;
+	private Icon historyIcon;
+	private JButton history;
+	private JButton transport;
+	private Icon transportIcon;
 
 	/**
 	 * Create the application.
@@ -243,15 +251,13 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		startRoomSEL.setEditable(false);
 		startRoomSEL.setVisible(true);
 		startRoomSEL.setName("Start");
-		
-		
 		mapNumber = new JTextPane();
 		mapNumber.setBounds(360, 634, 47, 20);
 		mapNumber.setFont(new Font("Helvetica Neue", Font.BOLD, 14));
 		mapNumber.setAlignmentX(StyleConstants.ALIGN_CENTER);
 		mapNumber.setAlignmentY(StyleConstants.ALIGN_CENTER);
 		uiPanel.add(mapNumber);
-		
+
 		//Construct Combo boxes to select start point
 		startBuildingSEL = new JComboBox<String>();
 		startBuildingSEL.setBounds(755, 50, 132, 29);
@@ -301,7 +307,6 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		endRoomSEL.setEditable(false);
 		endRoomSEL.setVisible(true);
 		endRoomSEL.setName("End");
-		
 
 		//Construct Combo boxes to select end point
 		endBuildingSEL = new JComboBox<String>();
@@ -362,7 +367,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 			leftArrow.setEnabled(false);
 		}
 
-		
+
 
 		rightArrow = new JButton(">>");
 		rightArrow.setBounds(412, 630, 80, 29);
@@ -374,15 +379,85 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		uiPanel.add(instructions);
 
 		directions = new JTextArea();
-		directions.setBounds(762, 210, 255, 450);
+		directions.setBounds(762, 210, 255, 420);
 		directions.setFont(new Font("Helvetica Neue", Font.PLAIN, 13));
 		directions.setLineWrap(true);
 		directions.setEditable(false);
 		JScrollPane scrollDire = new JScrollPane(directions);
-		scrollDire.setBounds(762, 210, 255, 450);
+		scrollDire.setBounds(762, 210, 255, 420);
 		scrollDire.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		uiPanel.add(scrollDire);
 
+		emergencyIcon = new ImageIcon("IconImages/emergencyIcon.png");
+		Icon emergencyIconBIG = new ImageIcon("IconImages/emergencyIconBIG.png");
+		emergency = new JButton();
+		emergency.setToolTipText("Emergency Information");
+		emergency.setIcon(emergencyIcon);
+		emergency.setBounds(790, 632, 40, 40);
+		uiPanel.add(emergency);
+		String emergencyInfo = "Call Campus Police:" + "\n" + "508-831-5555";
+		emergency.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				JOptionPane.showMessageDialog(null, emergencyInfo, "Incase of emergency", JOptionPane.PLAIN_MESSAGE, emergencyIconBIG);
+			}
+		});
+
+		emailIcon = new ImageIcon("IconImages/emailIcon.png");
+		email = new JButton();
+		email.setToolTipText("Send Directions via Email");
+		email.setIcon(emailIcon);
+		email.setBounds(840, 632, 40, 40);
+		uiPanel.add(email);
+
+		transportIcon = new ImageIcon("IconImages/transportIcon.png");
+		Icon transportIconBIG = new ImageIcon("IconImages/transportIconBIG.png");
+		Icon gatewaySchedule = new ImageIcon("IconImages/gatewaySchedule.png");
+		Icon eveningSchedule = new ImageIcon("IconImages/eveningSchedule.png");
+		Icon wpiumassSchedule = new ImageIcon("IconImages/wpi-umassSchedule.png");
+		Icon snapSchedule = new ImageIcon("IconImages/snapSchedule.png");
+		transport = new JButton();
+		transport.setToolTipText("View Transport Schedule");
+		transport.setIcon(transportIcon);
+		transport.setBounds(890, 632, 40, 40);
+		uiPanel.add(transport);
+		transport.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				String[] schedules = {"Gateway Shuttle", "Evening Shuttle", "WPI-Umass Shuttle", "SNAP"};
+				Object selectedValue = JOptionPane.showInputDialog(null, "Which transport would you like to use?", "Select Transport type",
+						JOptionPane.INFORMATION_MESSAGE, transportIconBIG,schedules, schedules[0]);
+				if(selectedValue != null){
+					switch((String) selectedValue){
+					case "Gateway Shuttle":
+						JOptionPane.showMessageDialog(null, null, "Gateway Shuttle Schedule", JOptionPane.INFORMATION_MESSAGE, gatewaySchedule);
+						break;
+					case "Evening Shuttle":
+						JOptionPane.showMessageDialog(null, null, "Evening Shuttle Schedule", JOptionPane.INFORMATION_MESSAGE, eveningSchedule);
+						break;
+					case "WPI-Umass Shuttle":
+						JOptionPane.showMessageDialog(null, null, "WPI-Umass Shuttle Schedule", JOptionPane.INFORMATION_MESSAGE, wpiumassSchedule);
+						break;
+					case "SNAP":
+						JOptionPane.showMessageDialog(null, null, "SNAP Shuttle", JOptionPane.INFORMATION_MESSAGE, snapSchedule);
+						break;
+					default:
+						break;
+					}
+				}
+			}
+		});
+
+		historyIcon = new ImageIcon("IconImages/historyIcon.png");
+		ImageIcon historyIconBIG = new ImageIcon("IconImages/historyIconBIG.png");
+		history = new JButton();
+		history.setToolTipText("...Coming Soon");
+		history.setIcon(historyIcon);
+		history.setBounds(940, 632, 40, 40);
+		uiPanel.add(history);
+		history.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				JOptionPane.showMessageDialog(null, "....Coming Soon", "...Coming Soon", JOptionPane.PLAIN_MESSAGE, historyIconBIG);
+			}
+		});
 
 		//Construct buttons and add action listener
 		searchButton.addActionListener(new ActionListener() {
@@ -407,7 +482,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 					directions.setText("Please Select End point");
 					updatePath = false;
 				}
-				if(updatePath){
+				if(updatePath && startNode != null && endNode != null){
 					System.out.println(startBuildingSEL.getSelectedItem());
 					System.out.println(floor);
 					listPath = pathCalc.navigate(startNode, endNode);
@@ -562,7 +637,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 					BasicStroke.JOIN_ROUND);
 			g2d.setStroke(s);
 
-			if (path==null && updatePath == true) {
+			if (path==null && updatePath == true && listPath.size() > 0) {
 				removeAll();
 				int i;
 				path = new GeneralPath();
@@ -617,7 +692,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 					g.fillOval(startNode.getX()-CircleDiam/2, startNode.getY()-CircleDiam/2, CircleDiam, CircleDiam);
 
 				}
-				if(endNode != null){
+				if(endNode != null && startNode != null && endNode != null){
 					g.setColor(Color.BLACK);
 					g.fillOval(startNode.getX()-(CircleDiam+3)/2, startNode.getY()-(CircleDiam+3)/2, CircleDiam+3, CircleDiam+3);
 					g.setColor(Color.GREEN);
@@ -630,7 +705,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 
 				}
 			}
-			if(startClicked){
+			if(startClicked && startNode != null && endNode != null){
 
 				g.setColor(Color.BLACK);
 				g.fillOval(startNode.getX()-(CircleDiam+3)/2, startNode.getY()-(CircleDiam+3)/2, CircleDiam+3, CircleDiam+3);
@@ -638,7 +713,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 				g.fillOval(startNode.getX()-CircleDiam/2, startNode.getY()-CircleDiam/2, CircleDiam, CircleDiam);
 
 			}
-			if(endClicked){
+			if(endClicked && startNode != null && endNode != null){
 				g.setColor(Color.BLACK);
 				g.fillOval(startNode.getX()-(CircleDiam+3)/2, startNode.getY()-(CircleDiam+3)/2, CircleDiam+3, CircleDiam+3);
 				g.setColor(Color.GREEN);
@@ -722,6 +797,11 @@ public class EndUserGUI extends JPanel implements ActionListener{
 								endHoverFlag = true;
 								return;
 								}
+						}
+						if(!endHoverFlag){
+							endHoverFlag = true;
+							return;
+						}
 						if(getPopupName().equals("Start")){
 							startClicked = true;
 							startNode = hovered;
@@ -732,22 +812,23 @@ public class EndUserGUI extends JPanel implements ActionListener{
 							endNode = hovered;
 							System.out.println("END SELECTED");
 						}
-					}
-				}
+					
+				
+		}
 
 				private Node getNodeByName(String name) {
-                    for(int i = 0; i < currentStartNodes.size(); i++){
-                        if(currentStartNodes.get(i).getName().equals(name)){
-                            return currentStartNodes.get(i);
-                        }
-                    }
-                    for(int j = 0; j < currentEndNodes.size(); j++){
-                        if(currentEndNodes.get(j).getName().equals(name)){
-                            return currentEndNodes.get(j);
-                        }
-                    }
-                    return null;
-                }
+					for(int i = 0; i < currentStartNodes.size(); i++){
+						if(currentStartNodes.get(i).getName().equals(name)){
+							return currentStartNodes.get(i);
+						}
+					}
+					for(int j = 0; j < currentEndNodes.size(); j++){
+						if(currentEndNodes.get(j).getName().equals(name)){
+							return currentEndNodes.get(j);
+						}
+					}
+					return null;
+				}
 			};
 			getPopupList().addListSelectionListener(listener);
 		}
@@ -761,6 +842,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		private String getPopupName() {
 			JComboBox jcb = (JComboBox) getUI().getAccessibleChild(this, 0).getAccessibleContext().getAccessibleParent();
 			return jcb.getName();
+		}
 	}
-}
+
 }
