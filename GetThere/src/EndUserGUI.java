@@ -132,6 +132,8 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	private JButton transport;
 	private Icon transportIcon;
 
+	private String emailDirections;
+
 	/**
 	 * Create the application.
 	 */
@@ -408,6 +410,17 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		email.setIcon(emailIcon);
 		email.setBounds(840, 632, 40, 40);
 		uiPanel.add(email);
+		email.addActionListener(new ActionListener()  {
+			public void actionPerformed(ActionEvent e)
+			{
+				if(emailDirections != null) {
+					EMailDialogue em = new EMailDialogue(frame, emailDirections);
+					em.setVisible(true);
+				}
+				else {
+				}
+			}
+		});
 
 		transportIcon = new ImageIcon("IconImages/transportIcon.png");
 		Icon transportIconBIG = new ImageIcon("IconImages/transportIconBIG.png");
@@ -517,7 +530,8 @@ public class EndUserGUI extends JPanel implements ActionListener{
 							mapNumber.setText(String.valueOf(1) + " of " + String.valueOf(totalMaps));
 						}
 					}
-					directions.setText(pathCalc.gpsInstructions(pathCalc.navigate(startNode, endNode)));
+					emailDirections = pathCalc.gpsInstructions(pathCalc.navigate(startNode, endNode));
+					directions.setText(emailDirections);
 					System.out.println("check List: " + listPath.size());
 					repaint();
 					revalidate();
