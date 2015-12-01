@@ -183,19 +183,19 @@ public class Djikstra  {
 			//result += "Angle = " + angle + " \n";
 			if(angle < -65 && angle >  -115){
 				counter +=1;
-				result += counter + ". " +"Take a right and ";
+				result += counter + ". " +"Take a left and "; 
 			}
 			else if(angle > 65 && angle <  115){
 				counter +=1;
-				result += counter + ". " +"Take a left and ";
+				result += counter + ". " +"Take a right and "; 
 			}
 			else if(angle < 65 && angle > 10){
 				counter +=1;
-				result += counter + ". " +"Take a slight left and ";
+				result += counter + ". " +"Take a slight right and "; 
 			}
 			else if(angle < -10 && angle > -65){
 				counter +=1;
-				result += counter + ". " +"Take a slight right and ";
+				result += counter + ". " +"Take a slight left and ";
 			}
 			else if (angle == 180 || angle == -180){
 				counter +=1;
@@ -203,11 +203,11 @@ public class Djikstra  {
 			}
 			else if(angle > 115){
 				counter +=1;
-				result += counter + ". " +"Take a hard left and ";
+				result += counter + ". " +"Take a hard right and ";
 			}
 			else if(angle < -115){
 				counter +=1;
-				result += counter + ". " +"Take a hard right and ";
+				result += counter + ". " +"Take a hard left and ";
 			}
 			else if(angle < 10 && angle > -10){
 				counter +=1;

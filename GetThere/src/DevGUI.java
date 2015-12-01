@@ -251,7 +251,7 @@ public class DevGUI extends JPanel{
 
 				}
 			});
-			
+
 			JButton btnCreateMapLink = new JButton("Map link");
 			btnCreateMapLink.setBounds(762, 196, 132, 29);
 			uiPanel.add(btnCreateMapLink);
@@ -290,7 +290,7 @@ public class DevGUI extends JPanel{
 					m1.produceEdges();
 					serialize("MapList", maps);
 					if(updateMap){
-						
+
 						for (int i = 0; i < maps.size(); i++) {
 							if(maps.get(i).getMapName() != null){
 								if(!currentMapList.contains(maps.get(i).getMapName())){
@@ -373,7 +373,7 @@ public class DevGUI extends JPanel{
 							Node newNode = new Node(x, y);
 							newNode.setName(currentMapName + "."+ newNode.getName());
 							currentStartNodes.add(newNode);
-							
+
 						}
 					}
 					if(createSpecial){
@@ -388,39 +388,41 @@ public class DevGUI extends JPanel{
 										"Choose a Node Type", "Input",
 										JOptionPane.INFORMATION_MESSAGE, null,
 										types, types[0]);
-								switch((String)selectedValue){
-								case "No Type":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.NOTYPE));
-									break;
-								case "Bathroom":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.BATHROOM));
-									break;
-								case "Blue Tower":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.BLUETOWER));
-									break;
-								case "Elevator":
-									makeLink(x, y, nodeName, NodeType.ELEVATOR);
-									break;
-								case "Stairs":
-									makeLink(x, y, nodeName, NodeType.STAIRS);
-									break;
-								case "Food":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.FOOD));
-									break;
-								case "Emergency Exit":
-									makeLink(x, y, nodeName, NodeType.EMERGEXIT);
-									break;
-								case "Lecture Hall":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.LECTUREHALL));
-									break;
-								case "Office":
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.OFFICE));
-									break;
-								case "Door":
-									makeLink(x, y, nodeName, NodeType.DOOR);
-									break;
-								default:
-									currentStartNodes.add(new Node(x, y, nodeName, NodeType.NOTYPE));
+								if(selectedValue != null){
+									switch((String)selectedValue){
+									case "No Type":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.NOTYPE));
+										break;
+									case "Bathroom":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.BATHROOM));
+										break;
+									case "Blue Tower":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.BLUETOWER));
+										break;
+									case "Elevator":
+										makeLink(x, y, nodeName, NodeType.ELEVATOR);
+										break;
+									case "Stairs":
+										makeLink(x, y, nodeName, NodeType.STAIRS);
+										break;
+									case "Food":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.FOOD));
+										break;
+									case "Emergency Exit":
+										makeLink(x, y, nodeName, NodeType.EMERGEXIT);
+										break;
+									case "Lecture Hall":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.LECTUREHALL));
+										break;
+									case "Office":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.OFFICE));
+										break;
+									case "Door":
+										makeLink(x, y, nodeName, NodeType.DOOR);
+										break;
+									default:
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.NOTYPE));
+									}
 								}
 							}
 						}
@@ -477,7 +479,7 @@ public class DevGUI extends JPanel{
 			addMouseMotionListener(this);
 
 		}
-		
+
 		public void makeLink(int x, int y, String nodeName, NodeType type){
 			int i;
 			currentType = type;
@@ -486,10 +488,10 @@ public class DevGUI extends JPanel{
 				mapNames[i] = currentMapList.get(i);
 			}
 			Object selectedMap = JOptionPane.showInputDialog(null, 
-									"Choose a map to connect to",
-									"Input",
-									JOptionPane.INFORMATION_MESSAGE, null,
-									mapNames, mapNames[1]);
+					"Choose a map to connect to",
+					"Input",
+					JOptionPane.INFORMATION_MESSAGE, null,
+					mapNames, mapNames[1]);
 			String tempMapName = (String) selectedMap;	
 			for (i = 0; i <maps.size(); i++){
 				if(tempMapName.equals(maps.get(i).getMapName())){
@@ -513,7 +515,7 @@ public class DevGUI extends JPanel{
 			g.drawImage(currentMapFile, 0, 0, this);
 			if(createMapLink){
 				g.drawImage(tempMapFile, 0, 0, this);
-				
+
 			}
 			repaint();
 			revalidate();
@@ -530,15 +532,15 @@ public class DevGUI extends JPanel{
 
 			for (int i = 0; i < currentStartNodes.size(); i++){
 				((Graphics2D)g).draw(new Rectangle (currentStartNodes.get(i).getX()-SquareWidth/2, 
-													currentStartNodes.get(i).getY()-SquareWidth/2,
-													SquareWidth, SquareWidth));
+						currentStartNodes.get(i).getY()-SquareWidth/2,
+						SquareWidth, SquareWidth));
 			}
 
 			for (int i = 0; i < currentStartEdges.size(); i++){
 				((Graphics2D)g).draw(new Line2D.Double(currentStartEdges.get(i).getNode1().getX(), 
-														currentStartEdges.get(i).getNode1().getY(),
-														currentStartEdges.get(i).getNode2().getX(),
-														currentStartEdges.get(i).getNode2().getY() ));
+						currentStartEdges.get(i).getNode1().getY(),
+						currentStartEdges.get(i).getNode2().getX(),
+						currentStartEdges.get(i).getNode2().getY() ));
 			}
 		}
 

@@ -134,6 +134,8 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	private JButton transport;
 	private Icon transportIcon;
 
+	private String emailDirections;
+
 	/**
 	 * Create the application.
 	 */
@@ -413,6 +415,17 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		email.setIcon(emailIcon);
 		email.setBounds(840, 632, 40, 40);
 		uiPanel.add(email);
+		email.addActionListener(new ActionListener()  {
+			public void actionPerformed(ActionEvent e)
+			{
+				if(emailDirections != null) {
+					EMailDialogue em = new EMailDialogue(frame, emailDirections);
+					em.setVisible(true);
+				}
+				else {
+				}
+			}
+		});
 
 		transportIcon = new ImageIcon("IconImages/transportIcon.png");
 		Icon transportIconBIG = new ImageIcon("IconImages/transportIconBIG.png");
@@ -430,19 +443,23 @@ public class EndUserGUI extends JPanel implements ActionListener{
 				String[] schedules = {"Gateway Shuttle", "Evening Shuttle", "WPI-Umass Shuttle", "SNAP"};
 				Object selectedValue = JOptionPane.showInputDialog(null, "Which transport would you like to use?", "Select Transport type",
 						JOptionPane.INFORMATION_MESSAGE, transportIconBIG,schedules, schedules[0]);
-				switch((String) selectedValue){
-				case "Gateway Shuttle":
-					JOptionPane.showMessageDialog(null, null, "Gateway Shuttle Schedule", JOptionPane.INFORMATION_MESSAGE, gatewaySchedule);
-					break;
-				case "Evening Shuttle":
-					JOptionPane.showMessageDialog(null, null, "Evening Shuttle Schedule", JOptionPane.INFORMATION_MESSAGE, eveningSchedule);
-					break;
-				case "WPI-Umass Shuttle":
-					JOptionPane.showMessageDialog(null, null, "WPI-Umass Shuttle Schedule", JOptionPane.INFORMATION_MESSAGE, wpiumassSchedule);
-					break;
-				case "SNAP":
-					JOptionPane.showMessageDialog(null, null, "SNAP Shuttle", JOptionPane.INFORMATION_MESSAGE, snapSchedule);
-					break;
+				if(selectedValue != null){
+					switch((String) selectedValue){
+					case "Gateway Shuttle":
+						JOptionPane.showMessageDialog(null, null, "Gateway Shuttle Schedule", JOptionPane.INFORMATION_MESSAGE, gatewaySchedule);
+						break;
+					case "Evening Shuttle":
+						JOptionPane.showMessageDialog(null, null, "Evening Shuttle Schedule", JOptionPane.INFORMATION_MESSAGE, eveningSchedule);
+						break;
+					case "WPI-Umass Shuttle":
+						JOptionPane.showMessageDialog(null, null, "WPI-Umass Shuttle Schedule", JOptionPane.INFORMATION_MESSAGE, wpiumassSchedule);
+						break;
+					case "SNAP":
+						JOptionPane.showMessageDialog(null, null, "SNAP Shuttle", JOptionPane.INFORMATION_MESSAGE, snapSchedule);
+						break;
+					default:
+						break;
+					}
 				}
 			}
 		});
@@ -518,7 +535,8 @@ public class EndUserGUI extends JPanel implements ActionListener{
 							mapNumber.setText(String.valueOf(1) + " of " + String.valueOf(totalMaps));
 						}
 					}
-					directions.setText(pathCalc.gpsInstructions(pathCalc.navigate(startNode, endNode)));
+					emailDirections = pathCalc.gpsInstructions(pathCalc.navigate(startNode, endNode));
+					directions.setText(emailDirections);
 					System.out.println("check List: " + listPath.size());
 					repaint();
 					revalidate();
