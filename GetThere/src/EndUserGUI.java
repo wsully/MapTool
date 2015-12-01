@@ -737,13 +737,18 @@ public class EndUserGUI extends JPanel implements ActionListener{
 				}
 
 				private Node getNodeByName(String name) {
-					for(int i = 0; i < currentStartNodes.size(); i++){
-						if(currentStartNodes.get(i).getName().equals(name)){
-							return currentStartNodes.get(i);
-						}
-					}
-					return null;
-				}
+                    for(int i = 0; i < currentStartNodes.size(); i++){
+                        if(currentStartNodes.get(i).getName().equals(name)){
+                            return currentStartNodes.get(i);
+                        }
+                    }
+                    for(int j = 0; j < currentEndNodes.size(); j++){
+                        if(currentEndNodes.get(j).getName().equals(name)){
+                            return currentEndNodes.get(j);
+                        }
+                    }
+                    return null;
+                }
 			};
 			getPopupList().addListSelectionListener(listener);
 		}
