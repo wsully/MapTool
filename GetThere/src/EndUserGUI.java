@@ -68,7 +68,8 @@ public class EndUserGUI extends JPanel implements ActionListener{
 
 	private boolean startClicked = false;
 	private boolean endClicked = false;
-
+	private boolean startHoverFlag = false;
+	private boolean endHoverFlag = false;
 
 
 	private JTextArea directions;
@@ -241,21 +242,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		startRoomSEL.setBounds(893, 50, 132, 29);
 		startRoomSEL.setEditable(false);
 		startRoomSEL.setVisible(true);
-		startRoomSEL.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				if(hovered != null){
-					startNode = hovered;
-					startClicked = true;
-				}
-			}
-		});
-		
-		mapNumber = new JTextPane();
-		mapNumber.setBounds(360, 634, 47, 20);
-		mapNumber.setFont(new Font("Helvetica Neue", Font.BOLD, 14));
-		mapNumber.setAlignmentX(StyleConstants.ALIGN_CENTER);
-		mapNumber.setAlignmentY(StyleConstants.ALIGN_CENTER);
-		uiPanel.add(mapNumber);
+		startRoomSEL.setName("Start");
 		
 		
 		mapNumber = new JTextPane();
@@ -298,6 +285,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 					if(startRooms[i] != "")
 						startRoomSEL.addItem(startRooms[i]);
 				}
+				startHoverFlag = false;
 				uiPanel.repaint();
 				frame.repaint();
 			}
@@ -312,25 +300,9 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		endRoomSEL.setBounds(893, 116, 132, 29);
 		endRoomSEL.setEditable(false);
 		endRoomSEL.setVisible(true);
-<<<<<<< HEAD
 		endRoomSEL.setName("End");
 		
 
-||||||| merged common ancestors
-		endRoomSEL.setName("End");
-		
-		
-=======
-		endRoomSEL.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				if(hovered != null){
-					endNode = hovered;
-					endClicked = true;
-				}
-			}
-		});
-
->>>>>>> 9091388cb6d78af8b802f775a5eceb2ad5f7aef4
 		//Construct Combo boxes to select end point
 		endBuildingSEL = new JComboBox<String>();
 		endBuildingSEL.setBounds(755, 116, 132, 29);
@@ -357,6 +329,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 					if(endRooms[i] != "")
 						endRoomSEL.addItem(endRooms[i]);
 				}
+				endHoverFlag = false;
 				uiPanel.repaint();
 				frame.repaint();
 			}
@@ -711,7 +684,6 @@ public class EndUserGUI extends JPanel implements ActionListener{
 
 		private ListSelectionListener listener;
 
-<<<<<<< HEAD
 		public XComboBox() {
 			uninstall();
 			install();
@@ -742,7 +714,14 @@ public class EndUserGUI extends JPanel implements ActionListener{
 					if (hovered != null){
 						//System.out.println("--> " + hovered.getX() + "---" + hovered.getY());
 						System.out.println(getPopupName());
-
+						if(!startHoverFlag){
+							startHoverFlag = true;
+							return;
+							}
+						if(!endHoverFlag){
+								endHoverFlag = true;
+								return;
+								}
 						if(getPopupName().equals("Start")){
 							startClicked = true;
 							startNode = hovered;
@@ -752,57 +731,9 @@ public class EndUserGUI extends JPanel implements ActionListener{
 							endClicked = true;
 							endNode = hovered;
 							System.out.println("END SELECTED");
-||||||| merged common ancestors
-				private Node getNodeByName(String name) {
-					for(int i = 0; i < currentStartNodes.size(); i++){
-						if(currentStartNodes.get(i).getName().equals(name)){
-							return currentStartNodes.get(i);
-=======
-		public XComboBox() {
-			uninstall();
-			install();
-		}
-
-		@Override
-		public void updateUI() {
-			uninstall();
-			super.updateUI();
-			install();
-		}
-
-		private void uninstall() {
-			if (listener == null) return;
-			getPopupList().removeListSelectionListener(listener);
-			listener = null;
-		}
-
-		protected void install() {
-			listener = new ListSelectionListener() {
-				@Override
-				public void valueChanged(ListSelectionEvent e) {
-
-					if (e.getValueIsAdjusting()) return;
-
-					JList list = getPopupList();
-					hovered = getNodeByName(String.valueOf(list.getSelectedValue()));
-					if (hovered != null){
-						//System.out.println("--> " + hovered.getX() + "---" + hovered.getY());
-						System.out.println(getPopupName());
-
-						if(getPopupName() == 476402209){
-							startClicked = true;
-							startNode = hovered;
-							System.out.println("START SELECTED");
-						}
-						else if(getPopupName() == 1919892312){
-							endClicked = true;
-							endNode = hovered;
-							System.out.println("END SELECTED");
->>>>>>> 9091388cb6d78af8b802f775a5eceb2ad5f7aef4
 						}
 					}
 				}
-<<<<<<< HEAD
 
 				private Node getNodeByName(String name) {
                     for(int i = 0; i < currentStartNodes.size(); i++){
@@ -830,55 +761,6 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		private String getPopupName() {
 			JComboBox jcb = (JComboBox) getUI().getAccessibleChild(this, 0).getAccessibleContext().getAccessibleParent();
 			return jcb.getName();
-		}
-||||||| merged common ancestors
-	        };
-	        getPopupList().addListSelectionListener(listener);
-	    }
-
-	    private JList getPopupList() {
-	        ComboPopup popup = (ComboPopup) getUI().getAccessibleChild(this, 0);
-	        System.out.println("-->>>" + popup.hashCode());
-	        return popup.getList();
-
-	    }
-	    
-	    private String getPopupName() {
-	    	 JComboBox jcb = (JComboBox) getUI().getAccessibleChild(this, 0).getAccessibleContext().getAccessibleParent();
-	       return jcb.getName();
-	        
-
-	    }
-=======
-
-				private Node getNodeByName(String name) {
-                    for(int i = 0; i < currentStartNodes.size(); i++){
-                        if(currentStartNodes.get(i).getName().equals(name)){
-                            return currentStartNodes.get(i);
-                        }
-                    }
-                    for(int j = 0; j < currentEndNodes.size(); j++){
-                        if(currentEndNodes.get(j).getName().equals(name)){
-                            return currentEndNodes.get(j);
-                        }
-                    }
-                    return null;
-                }
-			};
-			getPopupList().addListSelectionListener(listener);
-		}
-
-		private JList getPopupList() {
-			ComboPopup popup = (ComboPopup) getUI().getAccessibleChild(this, 0);
-			return popup.getList();
-
-		}
-
-		private int getPopupName() {
-			return getUI().getAccessibleChild(this, 0).getAccessibleContext().hashCode();
-
-
-		}
->>>>>>> 9091388cb6d78af8b802f775a5eceb2ad5f7aef4
 	}
+}
 }
