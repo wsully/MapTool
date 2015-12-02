@@ -123,7 +123,6 @@ public class EndUserGUI extends JPanel implements ActionListener{
 	private int arrowCounter = 0;
 	private int floor = -1;
 	
-	private int indexOfCurrentMap;
 	private Map currentlyShownMap;
 
 	private JButton emergency;
@@ -256,8 +255,10 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		startRoomSEL.setEditable(false);
 		startRoomSEL.setVisible(true);
 		startRoomSEL.setName("Start");
+		
 		mapNumber = new JTextPane();
 		mapNumber.setBounds(360, 634, 47, 20);
+		mapNumber.setEditable(false);
 		mapNumber.setFont(new Font("Helvetica Neue", Font.BOLD, 14));
 		mapNumber.setAlignmentX(StyleConstants.ALIGN_CENTER);
 		mapNumber.setAlignmentY(StyleConstants.ALIGN_CENTER);
@@ -276,6 +277,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 				endRoomSELLaunched = false;
 				repaint();
 				revalidate();
+				int indexOfCurrentMap;
 				@SuppressWarnings("unchecked")
 				JComboBox<String> cb = (JComboBox<String>)e.getSource();
 				buildingSelectedSTART = (String)cb.getSelectedItem();
@@ -284,7 +286,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 						break;
 				}
 				currentStartNodes = maps.get(indexOfCurrentMap).getNodes();
-				startRooms = new String[currentStartNodes.size()];
+                startRooms = new String[currentStartNodes.size()];
 				currentStartEdges = maps.get(indexOfCurrentMap).getEdges();
 				currentMapFile = maps.get(indexOfCurrentMap).getImage();
 				currentlyShownMap = maps.get(indexOfCurrentMap);
@@ -293,7 +295,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 				startRoomSEL.removeAllItems();
 				for(int i = 0; i < currentStartNodes.size(); ++i){
 					startRooms[i] = currentStartNodes.get(i).getName();
-					if(startRooms[i] != "")
+					if(startRooms[i] != "" && currentStartNodes.get(i).getType() != NodeType.NOTYPE)
 						startRoomSEL.addItem(startRooms[i]);
 				}
 				startHoverFlag = false;
@@ -330,14 +332,14 @@ public class EndUserGUI extends JPanel implements ActionListener{
 						break;
 				}
 				currentEndNodes = maps.get(indexOfCurrentMap).getNodes();
-				currentMapFile = maps.get(indexOfCurrentMap).getImage();
+                currentMapFile = maps.get(indexOfCurrentMap).getImage();
 				currentlyShownMap = maps.get(indexOfCurrentMap);
 				endRoomSEL.removeAllItems();
 				arrowCounter = 0;
 				mapsForPaths = null;
 				for(int i = 0; i < currentEndNodes.size(); ++i){
 					endRooms[i] = currentEndNodes.get(i).getName();
-					if(endRooms[i] != "")
+					if(endRooms[i] != "" && currentEndNodes.get(i).getType() != NodeType.NOTYPE)
 						endRoomSEL.addItem(endRooms[i]);
 				}
 				endHoverFlag = false;
@@ -365,7 +367,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		searchButton.setBounds(820, 150, 132, 29);
 		uiPanel.add(searchButton);
 
-
+		
 		leftArrow = new JButton("<<");
 		leftArrow.setBounds(275, 630, 80, 29);
 		uiPanel.add(leftArrow);
@@ -381,7 +383,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 		rightArrow.setEnabled(false);
 
 		JLabel instructions = new JLabel("How to get there?");
-		instructions.setBounds(762, 180, 132, 29);
+		instructions.setBounds(820, 180, 132, 29);
 		uiPanel.add(instructions);
 
 		directions = new JTextArea();
@@ -527,7 +529,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 					}
 					emailDirections = "From: " + startBuildingSEL.getSelectedItem() + ", " + startRoomSEL.getSelectedItem() + "\n" + "to "
                             + endBuildingSEL.getSelectedItem() + ", " + endRoomSEL.getSelectedItem() + "\n" + "\n" +
-                            pathCalc.gpsInstructions(pathCalc.navigate(startNode, endNode));;
+                            pathCalc.gpsInstructions(pathCalc.navigate(startNode, endNode));
 					directions.setText(emailDirections);
 					System.out.println("check List: " + listPath.size());
 					repaint();
@@ -696,13 +698,13 @@ public class EndUserGUI extends JPanel implements ActionListener{
 				repaint();
 				revalidate();
 			}
-			if (hovered != null && endNode != null && currentlyShownMap.getNodes().contains(endNode)){
+			if ((hovered != null) && (endNode != null) && (currentlyShownMap.getNodes().contains(endNode))){
 				g.setColor(Color.BLACK);
 				g.fillOval(endNode.getX()-(CircleDiam+3)/2, endNode.getY()-(CircleDiam+3)/2, CircleDiam+3, CircleDiam+3);
 				g.setColor(Color.RED);
 				g.fillOval(endNode.getX()-CircleDiam/2, endNode.getY()-CircleDiam/2, CircleDiam, CircleDiam);
 			}
-			if(startClicked && startNode != null && currentlyShownMap.getNodes().contains(startNode)){
+			if(startClicked && (startNode != null) && (currentlyShownMap.getNodes().contains(startNode))){
 
 				g.setColor(Color.BLACK);
 				g.fillOval(startNode.getX()-(CircleDiam+3)/2, startNode.getY()-(CircleDiam+3)/2, CircleDiam+3, CircleDiam+3);
@@ -710,7 +712,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 				g.fillOval(startNode.getX()-CircleDiam/2, startNode.getY()-CircleDiam/2, CircleDiam, CircleDiam);
 
 			}
-			if(endClicked && endNode != null && currentlyShownMap.getNodes().contains(endNode)){
+			if(endClicked && (endNode != null) && (currentlyShownMap.getNodes().contains(endNode))){
 				g.setColor(Color.BLACK);
 				g.fillOval(endNode.getX()-(CircleDiam+3)/2, endNode.getY()-(CircleDiam+3)/2, CircleDiam+3, CircleDiam+3);
 				g.setColor(Color.RED);
@@ -790,11 +792,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 								endHoverFlag = true;
 								return;
 								}
-						}
-						if(!endHoverFlag){
-							endHoverFlag = true;
-							return;
-						}
+						
 						if(getPopupName().equals("Start")){
 							startClicked = true;
 							startNode = hovered;
@@ -805,7 +803,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 							endNode = hovered;
 							System.out.println("END SELECTED");
 						}
-					
+					}
 				
 		}
 

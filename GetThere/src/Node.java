@@ -13,6 +13,7 @@ public class Node implements Serializable{
 	private NodeType type;
 	private LinkedList<Node> possibleNodes;
 	private String name;
+	private String mapName;
 	private LinkedList<Edge> EdgesList;
 	private int priority;
 //	private double distance;		//heuristic
@@ -42,7 +43,15 @@ public class Node implements Serializable{
 		this.type = t;
 		this.possibleNodes = new LinkedList<Node>();
 		this.EdgesList = new LinkedList<Edge>();
-	}	 
+	}	
+	
+	public String getMapName(){
+		return this.mapName;
+	}
+	
+	public void setMapName(String mapName){
+		this.mapName = mapName;
+	}
 	
 	public int getPriority(){
 		return this.priority;

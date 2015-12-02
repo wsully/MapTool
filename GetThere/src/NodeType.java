@@ -8,5 +8,6 @@ public enum NodeType {
 	EMERGEXIT,
 	LECTUREHALL, 
 	OFFICE,
-	DOOR
+	DOOR,
+	ROOM
 }

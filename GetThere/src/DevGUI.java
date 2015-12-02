@@ -331,7 +331,8 @@ public class DevGUI extends JPanel{
 	public class MouseEvents extends JComponent implements MouseMotionListener{
 		private static final long serialVersionUID = 1L;
 		private static final int SquareWidth = 5;
-		public String nodes;		
+		public String nodes;
+		private String nodeName;
 		int nodeIndex;
 
 		MouseEvents() {
@@ -357,19 +358,20 @@ public class DevGUI extends JPanel{
 					if(createNodes){
 						if (nodeIndex < 0){ // not inside a square
 							Node newNode = new Node(x, y);
-							newNode.setName(currentMapName + "."+ newNode.getName());
+							newNode.setMapName(currentMapName);
 							currentStartNodes.add(newNode);
 							
 						}
 					}
 					if(createSpecial){
 						if (nodeIndex < 0){ // not inside a square
-							String nodeName = currentMapName +"."+ JOptionPane.showInputDialog("Enter Node Name:");
+							nodeName = currentMapName +"."+ JOptionPane.showInputDialog("Enter Node Name:");
 							if(nodeName == null || (nodeName != null && ("".equals(nodeName)))){
 								return;
 							} else {
 								String[] types = {"No Type", "Bathroom", "Blue Tower", "Elevator", 
-										"Stairs", "Food", "Emergency Exit", "Lecture Hall", "Office"};
+										"Stairs", "Food", "Emergency Exit", "Lecture Hall", "Office", "Door",
+										"Room"};
 								Object selectedValue = JOptionPane.showInputDialog(null,
 										"Choose a Node Type", "Input",
 										JOptionPane.INFORMATION_MESSAGE, null,
@@ -378,12 +380,15 @@ public class DevGUI extends JPanel{
 									switch((String)selectedValue){
 									case "No Type":
 										currentStartNodes.add(new Node(x, y, nodeName, NodeType.NOTYPE));
+										currentStartNodes.get(currentStartNodes.size() - 1).setMapName(currentMapName);
 										break;
 									case "Bathroom":
 										currentStartNodes.add(new Node(x, y, nodeName, NodeType.BATHROOM));
+										currentStartNodes.get(currentStartNodes.size() - 1).setMapName(currentMapName);
 										break;
 									case "Blue Tower":
 										currentStartNodes.add(new Node(x, y, nodeName, NodeType.BLUETOWER));
+										currentStartNodes.get(currentStartNodes.size() - 1).setMapName(currentMapName);
 										break;
 									case "Elevator":
 										makeLink(x, y, nodeName, NodeType.ELEVATOR);
@@ -393,21 +398,29 @@ public class DevGUI extends JPanel{
 										break;
 									case "Food":
 										currentStartNodes.add(new Node(x, y, nodeName, NodeType.FOOD));
+										currentStartNodes.get(currentStartNodes.size() - 1).setMapName(currentMapName);
 										break;
 									case "Emergency Exit":
 										makeLink(x, y, nodeName, NodeType.EMERGEXIT);
 										break;
 									case "Lecture Hall":
 										currentStartNodes.add(new Node(x, y, nodeName, NodeType.LECTUREHALL));
+										currentStartNodes.get(currentStartNodes.size() - 1).setMapName(currentMapName);
 										break;
 									case "Office":
 										currentStartNodes.add(new Node(x, y, nodeName, NodeType.OFFICE));
+										currentStartNodes.get(currentStartNodes.size() - 1).setMapName(currentMapName);
 										break;
 									case "Door":
 										makeLink(x, y, nodeName, NodeType.DOOR);
 										break;
+									case "Room":
+										currentStartNodes.add(new Node(x, y, nodeName, NodeType.ROOM));
+										currentStartNodes.get(currentStartNodes.size() - 1).setMapName(currentMapName);
+										break;
 									default:
 										currentStartNodes.add(new Node(x, y, nodeName, NodeType.NOTYPE));
+										currentStartNodes.get(currentStartNodes.size() - 1).setMapName(currentMapName);
 									}
 								}
 							}
@@ -415,9 +428,9 @@ public class DevGUI extends JPanel{
 					}
 					if(createMapLink){
 						if (nodeIndex < 0){ // not inside a square
-							Node newNode = new Node(x, y);
-							newNode.setType(currentType);
-							newNode.setName(currentMapName + "."+ newNode.getName());
+							Node newNode = new Node(x, y, nodeName, currentType);
+							newNode.setMapName(currentMapName);
+							newNode.setName(newNode.getName());
 							currentStartNodes.add(newNode);
 							Edge newEdge = new Edge(currentNode, newNode, 0);
 							currentStartEdges.add(newEdge);
@@ -486,6 +499,7 @@ public class DevGUI extends JPanel{
 				}
 			}
 			Node linkNode = new Node(x, y, nodeName, type);
+			linkNode.setMapName(currentMapName);
 			currentNode = linkNode;
 			currentStartNodes.add(linkNode);
 			createMapLink = true;
