@@ -18,8 +18,9 @@ public class Map implements Serializable{
 	private LinkedList<Node> nodes;
 	private LinkedList<Edge> edges;
 	private String mapName;
+	private double scale;
 	
-	public Map(String mapPath, String mapName){
+	public Map(String mapPath, String mapName, double s){
 		BufferedImage img = null;
 		try {
 		    img = ImageIO.read(new File(mapPath));
@@ -28,6 +29,7 @@ public class Map implements Serializable{
 		this.mapName = mapName;
 		nodes = new LinkedList<Node>();
 		edges = new LinkedList<Edge>();
+		this.scale = s;
 	} 
 		
 	public Map(BufferedImage img, String mapName){
@@ -80,6 +82,10 @@ public class Map implements Serializable{
 	
 	public void addEdge(Edge edge){
 		this.edges.add(edge);
+	}
+	
+	public double getScale(){
+		return this.scale;
 	}
 	
 	public void deleteNode(Node node){
