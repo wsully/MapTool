@@ -102,6 +102,7 @@ public class EndUserGUI extends JPanel implements ActionListener{
 
 	//Buttons on the UI
 	private JButton searchButton;
+	private JButton clearButton;
 	Graphics g;
 	boolean updatePath = false;
 	private JButton leftArrow;
@@ -364,9 +365,24 @@ public class EndUserGUI extends JPanel implements ActionListener{
 
 		//Construct button and add button to uiPanel
 		searchButton = new JButton ("Search");
-		searchButton.setBounds(820, 150, 132, 29);
+		searchButton.setBounds(891, 150, 132, 30);
 		uiPanel.add(searchButton);
 
+		clearButton = new JButton ("Clear");
+        clearButton.setBounds(753, 150, 132, 30);
+        uiPanel.add(clearButton);
+        clearButton.addActionListener(new ActionListener()  {
+            public void actionPerformed(ActionEvent e)
+            {
+                updatePath = false;
+                startClicked = false;
+                endClicked = false;
+                endNode = null;
+                directions.setText("");
+                mapsForPaths = null;
+                mapNumber.setText("");
+            }
+        });
 		
 		leftArrow = new JButton("<<");
 		leftArrow.setBounds(275, 630, 80, 29);

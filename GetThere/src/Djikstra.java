@@ -83,7 +83,7 @@ public class Djikstra  {
 		frontier.add(start);
 		LinkedList<Node> temp = new LinkedList<Node>();
 		LinkedList<Node> path = new LinkedList<Node>();
-		if(start.getType() == (NodeType.BATHROOM)){
+		if(start.getType() == (NodeType.MBATHROOM) || start.getType() == (NodeType.FBATHROOM)){
 			path.add(start);
 			return path;
 			}
@@ -95,7 +95,7 @@ public class Djikstra  {
 		
 		while (!(frontier.isEmpty())){
 			current = frontier.poll(); // possibly use remove
-			if(current.getType() == (NodeType.BATHROOM)){
+			if(current.getType() == (NodeType.MBATHROOM) || current.getType() == (NodeType.FBATHROOM)){
 				break;
 			}
 			possibleNodes = current.getPossibleNodes();

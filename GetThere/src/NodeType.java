@@ -1,6 +1,8 @@
 public enum NodeType {
 	NOTYPE, 
-	BATHROOM, 
+	BATHROOM,
+	MBATHROOM,
+	FBATHROOM, 
 	BLUETOWER, 
 	ELEVATOR,
 	STAIRS,
