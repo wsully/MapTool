@@ -365,7 +365,7 @@ public class DevGUI extends JPanel{
 					}
 					if(createSpecial){
 						if (nodeIndex < 0){ // not inside a square
-							nodeName = currentMapName +"."+ JOptionPane.showInputDialog("Enter Node Name:");
+							nodeName = JOptionPane.showInputDialog("Enter Node Name:");
 							if(nodeName == null || (nodeName != null && ("".equals(nodeName)))){
 								return;
 							} else {
