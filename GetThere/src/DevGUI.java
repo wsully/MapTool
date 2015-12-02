@@ -283,19 +283,19 @@ public class DevGUI extends JPanel{
 			});
 			
 		
-			//Construct button and add action listener
-			JButton btnSetScale= new JButton("Set Scale");
-			btnSetScale.setBounds(762, 256, 132, 29);
-			uiPanel.add(btnSetScale);
-			btnSetScale.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e){
-					
-					
-					
-					System.out.println("Set Scale Pushed");
-
-				}
-			});
+//			//Construct button and add action listener
+//			JButton btnSetScale= new JButton("Set Scale");
+//			btnSetScale.setBounds(762, 256, 132, 29);
+//			uiPanel.add(btnSetScale);
+//			btnSetScale.addActionListener(new ActionListener() {
+//				public void actionPerformed(ActionEvent e){
+//					
+//					
+//					
+//					System.out.println("Set Scale Pushed");
+//
+//				}
+//			});
 			
 			
 //			SpinnerNumberModel model = new SpinnerNumberModel(1.0, 0.1, 1.4, .01);
