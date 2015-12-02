@@ -14,6 +14,16 @@ import java.awt.*;
 import java.awt.geom.Line2D;
 
 
+import java.awt.Dimension;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -22,6 +32,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.*;
 
 import java.util.*;
 import java.io.FileInputStream;
@@ -270,6 +281,42 @@ public class DevGUI extends JPanel{
 					createMapLink = false;
 				}
 			});
+			
+		
+			//Construct button and add action listener
+			JButton btnSetScale= new JButton("Set Scale");
+			btnSetScale.setBounds(762, 256, 132, 29);
+			uiPanel.add(btnSetScale);
+			btnSetScale.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e){
+					
+					
+					
+					System.out.println("Set Scale Pushed");
+
+				}
+			});
+			
+			
+//			SpinnerNumberModel model = new SpinnerNumberModel(1.0, 0.1, 1.4, .01);
+//			final JSpinner spinner = new JSpinner(model);
+//			spinner.setPreferredSize(new Dimension(45, spinner.getPreferredSize().height));
+//			spinner.addChangeListener(new ChangeListener()
+//			{
+//				public void stateChanged(ChangeEvent e)
+//				{
+//					float scale = ((Double)spinner.getValue()).floatValue();
+//					System.out.print(scale);
+//				}
+//			});
+//	
+//			uiPanel.add(new JLabel("scale"));
+//			uiPanel.add(spinner);
+	
+			
+			
+			
+			
 
 			//Construct button and add action listener
 			JButton btnExport = new JButton("Save Changes");
@@ -448,7 +495,7 @@ public class DevGUI extends JPanel{
 							System.out.println(nodeIndex);
 							currentStartEdges.add(new Edge(currentStartNodes.get(staringEdgeIndex), 
 									currentStartNodes.get(nodeIndex),
-									(int) calcDistance(currentStartNodes.get(staringEdgeIndex), currentStartNodes.get(nodeIndex))));
+									(int) calcDistance(currentStartNodes.get(staringEdgeIndex), currentStartNodes.get(nodeIndex), maps.get(indexOfCurrentMap).getScale())));
 							count = 0;
 						}
 					}
@@ -522,7 +569,7 @@ public class DevGUI extends JPanel{
 				
 				switch ((NodeType)currentStartNodes.get(i).getType()){
 					case NOTYPE:
-						g.setColor(Color.BLACK);
+						g.setColor(Color.RED);
 						break;
 					case BATHROOM:
 						g.setColor(Color.YELLOW);
@@ -544,11 +591,28 @@ public class DevGUI extends JPanel{
 			
 			g.setColor(Color.BLACK);
 			for (int i = 0; i < currentStartEdges.size(); i++){
+				
+			if(!isPortal(currentStartEdges.get(i).getNode1())||!isPortal(currentStartEdges.get(i).getNode2()))
 				((Graphics2D)g).draw(new Line2D.Double(currentStartEdges.get(i).getNode1().getX(), 
 														currentStartEdges.get(i).getNode1().getY(),
 														currentStartEdges.get(i).getNode2().getX(),
 														currentStartEdges.get(i).getNode2().getY() ));
+														
+			 System.out.println("Weight: "+currentStartEdges.get(i).getWeight() +"\n Map Scale: " + maps.get(indexOfCurrentMap).getScale());
 			}
+		}
+		public boolean isPortal(Node n)
+		{
+			switch ((NodeType)n.getType()){
+				case ELEVATOR:
+				case STAIRS:
+				case DOOR:
+				case EMERGEXIT:
+					return true;
+					
+				
+				}
+				return false;
 		}
 
 		public double calcDistance(int x1, int y1, int x2, int y2)
@@ -564,6 +628,11 @@ public class DevGUI extends JPanel{
 		public double calcDistance(Node n1, Node n2)
 		{
 			return (Math.sqrt((n1.getX()-n2.getX())*(n1.getX()-n2.getX()) + (n1.getY()-n2.getY())*(n1.getY()-n2.getY())));
+		}
+		
+		public double calcDistance(Node n1, Node n2, double scale)
+		{
+			return (Math.sqrt((n1.getX()-n2.getX())*(n1.getX()-n2.getX()) + (n1.getY()-n2.getY())*(n1.getY()-n2.getY())))/scale;
 		}
 
 		public void produceNodes(){
@@ -646,10 +715,10 @@ public class DevGUI extends JPanel{
 			int x = evt.getX();
 			int y = evt.getY();
 
-			if(nodeIndex >= 0) {
-				currentStartNodes.get(nodeIndex).setX(x);
-				currentStartNodes.get(nodeIndex).setY(y);
-			}
+//			if(nodeIndex >= 0) {
+//				currentStartNodes.get(nodeIndex).setX(x);
+//				currentStartNodes.get(nodeIndex).setY(y);
+//			}
 		}
 	}
 	public Boolean getDeveloperMode(){
