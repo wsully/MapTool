@@ -71,7 +71,7 @@ public class Djikstra  {
 		return path;
 	}
 	
-	public LinkedList<Node> nearestBathroom(Node start){
+	public LinkedList<Node> nearestSpecialNode(Node start, NodeType type){
 		if(start == null){
 			throw new IllegalArgumentException();
 		}
@@ -83,7 +83,7 @@ public class Djikstra  {
 		frontier.add(start);
 		LinkedList<Node> temp = new LinkedList<Node>();
 		LinkedList<Node> path = new LinkedList<Node>();
-		if(start.getType() == (NodeType.BATHROOM)){
+		if(start.getType() == type){
 			path.add(start);
 			return path;
 			}
@@ -95,7 +95,7 @@ public class Djikstra  {
 		
 		while (!(frontier.isEmpty())){
 			current = frontier.poll(); // possibly use remove
-			if(current.getType() == (NodeType.BATHROOM)){
+			if(current.getType() == type){
 				break;
 			}
 			possibleNodes = current.getPossibleNodes();
@@ -170,52 +170,112 @@ public class Djikstra  {
 			current = path.removeFirst();
 			next = path.removeFirst();
 			counter +=1;
-			result += counter + ". " + "Walk " + current.getCost(next) + "\n";
+			int nextCost = current.getCost(next);
+			if(nextCost != 0){
+			result += counter + ". " + "Walk " + nextCost + " ft"+ "\n";
+			}
+			else{
+				if(current.getType().equals(NodeType.STAIRS)){
+					result += counter + ". " + "Take the stairs "+ "\n";
+				}
+				else if (current.getType().equals(NodeType.ELEVATOR)){
+					result += counter + ". " + "Take the elevator"+ "\n";
+				}
+			}
+			boolean straightFlag = false;
+			int straightValue = 0;
+			boolean straightPrintFlag = false;
 		while(path.size() > 0){
+			
 			previous = current;
 			current = next;
 			next = path.removeFirst();
+			nextCost = current.getCost(next);
+			if (nextCost == 0){
+				if(current.getType().equals(NodeType.STAIRS)){
+					result += counter + ". " + "Take the stairs "+ "\n";
+				}
+				else if (current.getType().equals(NodeType.ELEVATOR)){
+					result += counter + ". " + "Take the elevator"+ "\n";
+				}
+			}
 //			double a = Math.sqrt((Math.pow(next.getX() - previous.getX(),2)) + (Math.pow(next.getY() - previous.getY(),2)));
 //			double b = Math.sqrt((Math.pow(next.getX() - current.getX(),2)) + (Math.pow(next.getY() - current.getY(),2)));
 //			double c = Math.sqrt((Math.pow(current.getX() - previous.getX(),2)) + (Math.pow(current.getY() - previous.getY(),2)));
 //			int angle = (int) Math.toDegrees(Math.acos((b*b + c*c - a*a)/(2*b*c)));
+			else{
 			int angle =  (int) Math.toDegrees((Math.atan2(next.getY()-current.getY(),next.getX()-current.getX()) -  Math.atan2(current.getY()-previous.getY(),current.getX()-previous.getX())));
 			//result += "Angle = " + angle + " \n";
+			if(angle < 10 && angle > -10){
+				if (!straightFlag){
+				counter +=1;
+				result += counter + ". " +"Keep straight and ";
+				straightFlag = true;
+				straightValue += nextCost;
+				}
+				else {
+					straightValue += nextCost;
+				}
+			}
+			
+			else{
+				if(straightFlag){
+					result += "walk " + straightValue + " ft" + "\n";
+					straightValue = 0;
+					straightFlag = false;
+					
+				}
+				
 			if(angle < -65 && angle >  -115){
 				counter +=1;
-				result += counter + ". " +"Take a left and "; 
+				result += counter + ". " +"Take a left and ";
+				result += "walk " + nextCost + " ft" + "\n";
+				
 			}
 			else if(angle > 65 && angle <  115){
 				counter +=1;
 				result += counter + ". " +"Take a right and "; 
+				result += "walk " + nextCost + " ft" + "\n";
+				
 			}
 			else if(angle < 65 && angle > 10){
 				counter +=1;
 				result += counter + ". " +"Take a slight right and "; 
+				result += "walk " + nextCost + " ft" + "\n";
 			}
 			else if(angle < -10 && angle > -65){
 				counter +=1;
 				result += counter + ". " +"Take a slight left and ";
+				result += "walk " + nextCost + " ft" + "\n";
 			}
 			else if (angle == 180 || angle == -180){
 				counter +=1;
 				result += counter + ". " +"retrace your steps and contact whoever wrote this code, cause he screwed up, then ";
+				result += "walk " + nextCost + " ft" + "\n";
 			}
 			else if(angle > 115){
 				counter +=1;
-				result += counter + ". " +"Take a hard right and ";
+				result += counter + ". " +"Take a hard left and ";
+				result += "walk " + nextCost + " ft" + "\n";
 			}
 			else if(angle < -115){
 				counter +=1;
-				result += counter + ". " +"Take a hard left and ";
+				result += counter + ". " +"Take a hard right and ";
+				result += "walk " + nextCost + " ft" + "\n";
 			}
-			else if(angle < 10 && angle > -10){
-				counter +=1;
-				result += counter + ". " +"Keep straight and ";
-			}
-			result += "walk " + current.getCost(next) + " \n";
+			
+			
+			
+		}
+			}	
 		}
 		counter +=1;
+		if(straightFlag){
+			result += "walk " + straightValue + " ft \n";
+			straightValue = 0;
+			straightFlag = false;
+			
+		}
 		result += counter + ". " + "You have reached your destination \n";
 		
 		return result;

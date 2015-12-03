@@ -17,7 +17,7 @@ public class SelectMap extends JFrame {
 	   
     super("Import map");
     
-    setSize(350, 100);
+    setSize(500, 75);
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     
     Container c = getContentPane();
@@ -26,6 +26,7 @@ public class SelectMap extends JFrame {
     JButton openButton = new JButton("Open");
     JButton importButton = new JButton("Import");
     final JTextField mapName = new JTextField("Map name", 13);
+    final JTextField scale = new JTextField("Scale", 6);
     
 
     // Create a file chooser that opens up as an Open dialog
@@ -45,7 +46,7 @@ public class SelectMap extends JFrame {
     
     importButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent ae) {
-        Map newMap = new Map(filePath, mapName.getText());
+        Map newMap = new Map(filePath, mapName.getText(), Double.parseDouble(scale.getText()) );
         DevGUI.maps.add(newMap);
         System.out.println("TEST");       
       }
@@ -54,7 +55,9 @@ public class SelectMap extends JFrame {
 
     c.add(openButton);
     c.add(mapName);
+    c.add(scale);
     c.add(importButton);
+    
 
   }
 
